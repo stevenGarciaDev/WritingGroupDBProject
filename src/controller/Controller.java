@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package writinggroup;
+package controller;
 
 /**
  *
  * @author stevengarcia
  */
-public class View {
+public class Controller {
     
 }
