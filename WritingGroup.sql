@@ -33,3 +33,36 @@ CREATE TABLE Book (
 
 insert into WritingGroup (GroupName, HeadWriter, YearFormed, Subject)
     values ('Wonder Pen', 'James Jon', '1999', 'English');
+
+# List all writing groups
+SELECT * FROM WritingGroup;
+
+# List all the data for a group specified by the user
+SELECT * FROM WritingGroup WHERE groupName = '?';
+
+# List all publishers
+SELECT * FROM Publisher;
+
+# List all the data for a pubisher specified by the user
+SELECT * FROM Publisher WHERE publisherName = '?';
+
+# List all book titles
+SELECT bookTitle FROM Book;
+
+# List all the data for a book specified by the user. 
+SELECT * FROM Book WHERE bookTitle = '?'
+	NATURAL JOIN Publisher
+	NATURAL JOIN WritingGroup;
+
+# Insert a new book
+INSERT INTO BOOK VALUES('?', '?', '?');
+
+# Insert a new publisher and update all 
+# book published by one publisher to be published
+# by the new pubisher.
+
+	# need to enclose both parts in a transaction
+INSERT INTO Publisher VALUES('?', '?', '?', '?');
+UPDATE Book SET publisherName = '?' 
+	WHERE publisherName = '?';
+
