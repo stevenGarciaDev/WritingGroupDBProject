@@ -7,7 +7,7 @@ package model;
 
 /**
  *
- * @author Brian
+ * @author Brian and Steven
  */
 public class Book {
     

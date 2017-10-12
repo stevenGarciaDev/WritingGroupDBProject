@@ -1,26 +1,28 @@
-create table WritingGroup(
-    GroupName   varchar(30) not null,
-    Headwriter  varchar(30),
-    YearFormed  int,
-    Subject     varchar(10),
-    constraint writinggroup_pk primary key (GroupName)
+CREATE TABLE WritingGroup (
+	GroupName VARCHAR(30) NOT NULL,
+	HeadWriter VARCHAR(30),
+	YearFormed YEAR,
+	Subject VARCHAR(30),
+	CONSTRAINT writinggroup_pk PRIMARY KEY (GroupName)
 );
 
-create table Publisher(
-    PublisherName       varchar(30) not null,
-    PublisherAddress    varchar(40),
-    PublisherPhone      int,
-    PublisherEmail      varchar(20),
-    constraint publisher_pk primary key (PublisherName)
+CREATE TABLE Book (
+	BookTitle VARCHAR(60) NOT NULL,
+	YearPublished YEAR,
+	NumberPages INTEGER,
+	GroupName VARCHAR(30) NOT NULL,
+	PublisherName VARCHAR(60) NOT NULL,
+	CONSTRAINT book_pk PRIMARY KEY (GroupName, BookTitle, PublisherName),
+	CONSTRAINT writing_groups_fk FOREIGN KEY (groupName)
+	REFERENCES WritingGroup (GroupName),
+	CONSTRAINT publishers_fk FOREIGN KEY (publisherName)
+	REFERENCES Publisher (publisherName)
 );
 
-create table Book(
-    GroupName       varchar(30) not null,
-    BookTitle       varchar(30) not null,
-    PublisherName   varchar(30) not null,
-    YearPublished   int,
-    NumberPages     int,
-    constraint book_pk primary key (GroupName, BookTitle, PublisherName),
-    constraint writer_book_fk foreign key (GroupName) references WritingGroup
-    constraint publisher_book_fk foreign key ()
+CREATE TABLE Publisher (
+	PublisherName VARCHAR(60) NOT NULL,
+	PublisherAddress VARCHAR(80),
+	PublisherPhone VARCHAR(10),
+	PublisherEmail VARCHAR(50),
+	CONSTRAINT pk_publisher PRIMARY KEY (PublisherName)
 );
