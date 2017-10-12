@@ -11,8 +11,8 @@ import java.util.Scanner;
  */
 public class Controller {
     //  Database credentials
-    static String USER;
-    static String PASS;
+    //static String USER;
+    //static String PASS;
     static String DBNAME;
     //This is the specification for the printout that I'm doing:
     //each % denotes the start of a new field.
@@ -62,30 +62,78 @@ public class Controller {
             //STEP 3: Open a connection
             System.out.println("Connecting to database...");
             conn = DriverManager.getConnection(DB_URL);
-
-            //STEP 4: Execute a query
-            System.out.println("Creating statement...");
-            stmt = conn.createStatement();
-            String sql;
-            sql = "SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroup";
-            ResultSet rs = stmt.executeQuery(sql);
-
-            //STEP 5: Extract data from result set
-            System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
-            while (rs.next()) {
-                //Retrieve by column name
-                String cGroupName = rs.getString("GroupName");
-                String cHeadWriter = rs.getString("Headwriter");
-                String cYearFormed = rs.getString("YearFormed");
-                String cSubject = rs.getString("Subject");
-
-                //Display values
-                System.out.printf(displayFormat,
-                        dispNull(cGroupName), dispNull(cHeadWriter), 
-                        dispNull(cYearFormed), dispNull(cSubject));
+            System.out.println("Database successfully connected.");
+            
+            int choice = 0;
+            
+            System.out.println("Please choose the following options\n"
+                + "1. List all Writing Group\n"
+                + "2. List all Data of a Group (User's input required)\n"
+                + "3. List all Publishers\n"
+                + "4. List all Data of a Publisher (User's input required)\n"
+                + "5. List all Book Titles (Titles Only)\n"
+                + "6. List all Data of a Book (User's input required)\n"
+                + "7. Insert a new Book\n"
+                + "8. Insert a new Publisher (Followed by a replacing of an old Publisher)\n"
+                + "9. Remove a Book\n");
+            while (choice < 1 || choice > 9){
+                System.out.print("Enter numbers 1 - 10: ");
+                choice = in.nextInt();
             }
+            
+            switch(choice){
+                case 1:{
+                    System.out.println("Creating statement...");
+                    stmt = conn.createStatement();
+                    String sql;
+                    sql = "SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroup";
+                    ResultSet rs = stmt.executeQuery(sql);
+
+                    //STEP 5: Extract data from result set
+                    System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
+                    while (rs.next()) {
+                        //Retrieve by column name
+                        String cGroupName = rs.getString("GroupName");
+                        String cHeadWriter = rs.getString("Headwriter");
+                        String cYearFormed = rs.getString("YearFormed");
+                        String cSubject = rs.getString("Subject");
+
+                            //Display values
+                        System.out.printf(displayFormat,
+                                dispNull(cGroupName), dispNull(cHeadWriter), 
+                                dispNull(cYearFormed), dispNull(cSubject));
+                    }
+
+                }
+                case 2:{
+                
+                }
+                case 3:{
+                
+                }
+                case 4:{
+                
+                }
+                case 5:{
+                
+                }
+                case 6:{
+                
+                }
+                case 7:{
+                
+                }
+                case 8:{
+                
+                }
+                default:{
+                    
+                }
+            };
+            
+            
             //STEP 6: Clean-up environment
-            rs.close();
+            
             stmt.close();
             conn.close();
         } catch (SQLException se) {
