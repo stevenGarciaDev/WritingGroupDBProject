@@ -20,7 +20,8 @@ public class Controller {
     //The number indicates how wide to make the field.
     //The "s" denotes that it's a string.  All of our output in this test are
     //strings, but that won't always be the case.
-    static final String displayFormat="%-15s%-15s%-15s%-15s\n";
+    static final String displayFormat="%-30s%-30s%-30s%-30s\n";
+    static final String displayFormat2="%-30s%-30s%-30s%-30s%-30s\n";
 // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
@@ -103,31 +104,77 @@ public class Controller {
                                 dispNull(cGroupName), dispNull(cHeadWriter), 
                                 dispNull(cYearFormed), dispNull(cSubject));
                     }
-
+                    break;
                 }
                 case 2:{
-                
+                    break;
                 }
                 case 3:{
-                
+                    System.out.println("Creating statement...");
+                    stmt = conn.createStatement();
+                    String sql;
+                    sql = "SELECT PublisherName, PublisherAddress, "
+                            + "PublisherPhone, PublisherEmail FROM Publisher";
+                    ResultSet rs = stmt.executeQuery(sql);
+
+                    //STEP 5: Extract data from result set
+                    System.out.printf(displayFormat, "Publisher Name", "Publisher Address", 
+                                "Publisher Phone", "Publisher Email");
+                    while (rs.next()) {
+                        //Retrieve by column name
+                        String cPublisherName = rs.getString("PublisherName");
+                        String cPublisherAddress = rs.getString("PublisherAddress");
+                        String cPublisherPhone = rs.getString("PublisherPhone");
+                        String cPublisherEmail = rs.getString("PublisherEmail");
+
+                            //Display values
+                        System.out.printf(displayFormat,
+                                dispNull(cPublisherName), dispNull(cPublisherAddress), 
+                                dispNull(cPublisherPhone), dispNull(cPublisherEmail));
+                    }
+                    break;
                 }
                 case 4:{
-                
+                    break;
                 }
                 case 5:{
-                
+                    System.out.println("Creating statement...");
+                    stmt = conn.createStatement();
+                    String sql;
+                    sql = "SELECT GroupName, BookTitle, PublisherName, YearPublished, "
+                            + "NumberPages FROM Book";
+                    ResultSet rs = stmt.executeQuery(sql);
+
+                    //STEP 5: Extract data from result set
+                    System.out.printf(displayFormat2, "Group Name", "Book Title", 
+                            "Publisher Name", "Year Published", "Number Pages");
+                    while (rs.next()) {
+                        //Retrieve by column name
+                        String cGroupName = rs.getString("GroupName");
+                        String cBookTitle = rs.getString("BookTitle");
+                        String cPublisherName = rs.getString("PublisherName");
+                        String cYearPublished = rs.getString("YearPublished");
+                        String cNumberPages = rs.getString("NumberPages");
+
+                            //Display values
+                        System.out.printf(displayFormat2,
+                                dispNull(cGroupName), dispNull(cBookTitle), 
+                                dispNull(cPublisherName), dispNull(cYearPublished),
+                                dispNull(cNumberPages));
+                    }
+                    break;
                 }
                 case 6:{
-                
+                    break;
                 }
                 case 7:{
-                
+                    break;
                 }
                 case 8:{
-                
+                    break;
                 }
                 default:{
-                    
+                    break;
                 }
             };
             
