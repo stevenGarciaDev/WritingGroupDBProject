@@ -83,6 +83,7 @@ public class Controller {
             }
             
             switch(choice){
+                //List all writing groups
                 case 1:{
                     System.out.println("Creating statement...");
                     stmt = conn.createStatement();
@@ -106,9 +107,11 @@ public class Controller {
                     }
                     break;
                 }
+                //list all data of a group (User's input required)
                 case 2:{
                     break;
                 }
+                //List all publishers
                 case 3:{
                     System.out.println("Creating statement...");
                     stmt = conn.createStatement();
@@ -134,45 +137,42 @@ public class Controller {
                     }
                     break;
                 }
+                //List all data of a Publisher (user's input required)
                 case 4:{
                     break;
                 }
+                //List all book titles (Titles Only)
                 case 5:{
                     System.out.println("Creating statement...");
                     stmt = conn.createStatement();
                     String sql;
-                    sql = "SELECT GroupName, BookTitle, PublisherName, YearPublished, "
-                            + "NumberPages FROM Book";
+                    sql = "SELECT BookTitle FROM Book";
                     ResultSet rs = stmt.executeQuery(sql);
 
                     //STEP 5: Extract data from result set
-                    System.out.printf(displayFormat2, "Group Name", "Book Title", 
-                            "Publisher Name", "Year Published", "Number Pages");
+                    System.out.printf("Book Title");
                     while (rs.next()) {
                         //Retrieve by column name
-                        String cGroupName = rs.getString("GroupName");
                         String cBookTitle = rs.getString("BookTitle");
-                        String cPublisherName = rs.getString("PublisherName");
-                        String cYearPublished = rs.getString("YearPublished");
-                        String cNumberPages = rs.getString("NumberPages");
 
                             //Display values
-                        System.out.printf(displayFormat2,
-                                dispNull(cGroupName), dispNull(cBookTitle), 
-                                dispNull(cPublisherName), dispNull(cYearPublished),
-                                dispNull(cNumberPages));
+                        System.out.printf(dispNull(cBookTitle));
                     }
                     break;
                 }
+                //List all data of a book
                 case 6:{
                     break;
                 }
+                //Insert a new Book
                 case 7:{
                     break;
                 }
+                //Insert a new Publisher (followed by a replacing of an old Publisher)
                 case 8:{
                     break;
                 }
+                //remove a book
                 default:{
                     break;
                 }
