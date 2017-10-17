@@ -8,6 +8,7 @@ import java.util.Scanner;
 /**
  *
  * @author Mimi Opkins with some tweaking from Dave Brown
+ * and more tweaking from Brian Pham and Steven Garcia
  */
 public class Controller {
     //  Database credentials
@@ -21,7 +22,6 @@ public class Controller {
     //The "s" denotes that it's a string.  All of our output in this test are
     //strings, but that won't always be the case.
     static final String displayFormat="%-30s%-30s%-30s%-30s\n";
-    static final String displayFormat2="%-30s%-30s%-30s%-30s%-30s\n";
 // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
@@ -66,7 +66,7 @@ public class Controller {
             System.out.println("Database successfully connected.");
             
             int choice = 0;
-            
+            Scanner reader = new Scanner(System.in);
             System.out.println("Please choose the following options\n"
                 + "1. List all Writing Group\n"
                 + "2. List all Data of a Group (User's input required)\n"
@@ -109,6 +109,30 @@ public class Controller {
                 }
                 //list all data of a group (User's input required)
                 case 2:{
+                    System.out.println("Please enter a group name you want shown: ");
+                    String gn = reader.nextLine();
+                    
+                    System.out.println("Creating statement...");
+                    stmt = conn.createStatement();
+                    String sql;
+                    sql = "SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroup";
+                    sql += " WHERE GroupName = '" + gn + "'";
+                    ResultSet rs = stmt.executeQuery(sql);
+
+                    //STEP 5: Extract data from result set
+                    System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
+                    while (rs.next()) {
+                        //Retrieve by column name
+                        String cGroupName = rs.getString("GroupName");
+                        String cHeadWriter = rs.getString("Headwriter");
+                        String cYearFormed = rs.getString("YearFormed");
+                        String cSubject = rs.getString("Subject");
+
+                            //Display values
+                        System.out.printf(displayFormat,
+                                dispNull(cGroupName), dispNull(cHeadWriter), 
+                                dispNull(cYearFormed), dispNull(cSubject));
+                    }
                     break;
                 }
                 //List all publishers
