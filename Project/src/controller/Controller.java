@@ -89,7 +89,7 @@ public class Controller {
             switch(choice){
                 //List all writing groups
                 case 1:{
-                    System.out.println("Creating statement...");
+                    System.out.println("Creating statement...\n");
                     stmt = conn.createStatement();
                     String sql;
                     sql = "SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroup";
@@ -143,7 +143,7 @@ public class Controller {
                 }
                 //List all publishers
                 case 3:{
-                    System.out.println("Creating statement...");
+                    System.out.println("Creating statement...\n");
                     stmt = conn.createStatement();
                     String sql;
                     sql = "SELECT PublisherName, PublisherAddress, "
@@ -177,7 +177,7 @@ public class Controller {
                     System.out.println("Please enter a publisher name you want shown: ");
                     String publisher = reader.nextLine();
                     
-                    System.out.println("Creating statement...");
+                    System.out.println("Creating statement...\n");
                     
                     String sql;
                     sql = "SELECT PublisherName, PublisherAddress, "
@@ -206,7 +206,7 @@ public class Controller {
                 }
                 //List all book titles (Titles Only)
                 case 5:{
-                    System.out.println("Creating statement...");
+                    System.out.println("Creating statement...\n");
                     stmt = conn.createStatement();
                     String sql;
                     sql = "SELECT BookTitle FROM Book";
@@ -228,7 +228,7 @@ public class Controller {
                     System.out.print("Enter a book title: ");
                     String bookTitle = reader.nextLine();
                     
-                    System.out.println("Creating statement...");
+                    System.out.println("Creating statement...\n");
                     stmt = conn.createStatement();
                     String sql;
                     sql = "SELECT * FROM Book"
@@ -317,7 +317,7 @@ public class Controller {
                     
                     
                     System.out.println("Creating statement...");
-                    System.out.println("Adding to database...");
+                    System.out.println("Adding to database...\n");
                     String sql;
                     sql = "INSERT INTO Book(BookTitle, YearPublished, NumberPages, GroupName, PublisherName) VALUES "
                             + "(?,?,?,?,?);";
