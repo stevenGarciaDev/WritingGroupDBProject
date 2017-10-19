@@ -324,6 +324,11 @@ public class Controller {
                     preStmt.setString(5, publisherName);                    
                     ResultSet rs = preStmt.executeQuery();
                     
+                    System.out.println("Added: [" + bookTitle + ", " +
+                                    yearPublished + ", " + 
+                                    numPages + ", " + 
+                                    groupName + ", " + 
+                                    publisherName + "]");
                     break;
                 }
                 //Insert a new Publisher (followed by a replacing of an old Publisher)
