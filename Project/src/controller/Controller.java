@@ -232,7 +232,26 @@ public class Controller {
                     ResultSet rs = preStmt.executeQuery();
 
                     //STEP 5: Extract data from result set
-                    
+                    String dsplyFrmt = "%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s";
+                    System.out.printf(dsplyFrmt, "Book Title", "Group Name", "Publisher Name", "Year Published", "Number of Pages", 
+                                    "Head Writer", "Year Formed", "Subject", "Publisher Address", "Publisher Phone", "Publisher Email");
+                    while (rs.next()){
+                        String bBookTitle = rs.getString("BookTitle");
+                        String bGroupName = rs.getString("GroupName");
+                        String bPublisherName = rs.getString("PublisherName");
+                        String bYearPublished = rs.getString("YearPublished");
+                        String bNumberOfPages = rs.getString("NumberPages");
+                        String bHeadWriter = rs.getString("HeadWriter");
+                        String bYearFormed = rs.getString("YearFormed");
+                        String bSubject = rs.getString("Subject");
+                        String bPublisherAddress = rs.getString("PublisherAddress");
+                        String bPublisherPhone = rs.getString("PublisherPhone");
+                        String bPublisherEmail = rs.getString("PublisherEmail");
+                        
+                        System.out.printf(dsplyFrmt, dispNull(bBookTitle), dispNull(bGroupName), dispNull(bPublisherName), 
+                                dispNull(bYearPublished), dispNull(bNumberOfPages), dispNull(bHeadWriter), dispNull(bYearFormed), 
+                                dispNull(bSubject), dispNull(bPublisherAddress), dispNull(bPublisherPhone), dispNull(bPublisherEmail));
+                    }
                     break;
                 }
                 //Insert a new Book
@@ -242,10 +261,12 @@ public class Controller {
                 }
                 //Insert a new Publisher (followed by a replacing of an old Publisher)
                 case 8:{
+                    
                     break;
                 }
                 //remove a book
                 default:{
+                    
                     break;
                 }
             };
