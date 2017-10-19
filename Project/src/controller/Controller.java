@@ -72,7 +72,7 @@ public class Controller {
             int choice = 0;
             Scanner reader = new Scanner(System.in);
             System.out.println("Please choose the following options\n"
-                + "1. List all Writing Group\n"
+                + "1. List all Writing Groups\n"
                 + "2. List all Data of a Group (User's input required)\n"
                 + "3. List all Publishers\n"
                 + "4. List all Data of a Publisher (User's input required)\n"
@@ -82,7 +82,7 @@ public class Controller {
                 + "8. Insert a new Publisher (Followed by a replacing of an old Publisher)\n"
                 + "9. Remove a Book\n");
             while (choice < 1 || choice > 9){
-                System.out.print("Enter numbers 1 - 10: ");
+                System.out.print("Enter numbers 1 - 9: ");
                 choice = in.nextInt();
             }
             
