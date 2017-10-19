@@ -10,6 +10,7 @@ import java.util.Scanner;
  * @author Mimi Opkins with some tweaking from Dave Brown
  */
 public class Controller {
+    static Scanner scan = new Scanner(System.in);
     //  Database credentials
     //static String USER;
     //static String PASS;
@@ -56,6 +57,8 @@ public class Controller {
         DB_URL = DB_URL + DBNAME; // + ";user=" + USER + ";password=" + PASS;
         Connection conn = null; //initialize the connection
         Statement stmt = null;  //initialize the statement that we're using
+        PreparedStatement pstmt = null;
+        
         try {
             //STEP 2: Register JDBC driver
             Class.forName("org.apache.derby.jdbc.ClientDriver");
@@ -130,7 +133,7 @@ public class Controller {
                         String cPublisherPhone = rs.getString("PublisherPhone");
                         String cPublisherEmail = rs.getString("PublisherEmail");
 
-                            //Display values
+                        //Display values
                         System.out.printf(displayFormat,
                                 dispNull(cPublisherName), dispNull(cPublisherAddress), 
                                 dispNull(cPublisherPhone), dispNull(cPublisherEmail));
@@ -139,6 +142,26 @@ public class Controller {
                 }
                 //List all data of a Publisher (user's input required)
                 case 4:{
+                    System.out.print("Please specify which Publisher: ");
+                    String specifiedPublisher = scan.next();
+                    
+                    String sql = "SELECT * FROM Publishers WHERE publisherName = ?";
+                    pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, specifiedPublisher);
+                    
+                    ResultSet rs = pstmt.executeQuery();
+                    while (rs.next()) {
+                        String cPublisherName = rs.getString("PublisherName");
+                        String cPublisherAddress = rs.getString("PublisherAddress");
+                        String cPublisherPhone = rs.getString("PublisherPhone");
+                        String cPublisherEmail = rs.getString("PublisherEmail");
+                        
+                        //Display values
+                        System.out.printf(displayFormat,
+                            dispNull(cPublisherName), dispNull(cPublisherAddress), 
+                            dispNull(cPublisherPhone), dispNull(cPublisherEmail));
+                    }
+
                     break;
                 }
                 //List all book titles (Titles Only)
@@ -162,6 +185,7 @@ public class Controller {
                 }
                 //List all data of a book
                 case 6:{
+                    
                     break;
                 }
                 //Insert a new Book
