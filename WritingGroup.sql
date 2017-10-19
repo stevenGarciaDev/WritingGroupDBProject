@@ -66,3 +66,11 @@ INSERT INTO Publisher VALUES('?', '?', '?', '?');
 UPDATE Book SET publisherName = '?' 
 	WHERE publisherName = '?';
 
+INSERT INTO Publisher(publisherName, publisherAddress,
+	publisherPhone, publisherEmail) VALUES 
+	('Prestige Worldwide', '9810 Santa Catalina Island', '1111111111', 'prestigeWorldWide@myspace.com'),
+	('Harry Potter', '1092 London, England', '7777777777', 'theChosenOne@myspace.com'),
+	('Drake', '6666 Toronto, Canada', '6666666666', 'champagnePapi@yolo.com'),
+	('Tupac', '1010 Harlem, New York', '9999999999', '2pac@yolo.com'),
+	('Willy Wonka', '7680 Chocolate Street, Vermont', '5555555555', 'willyWonka@myspace.com'),
+	('Bernie Sanders', '0000 Bottom 99 Persent, Maryland', '0000000000', 'topOnePercent@myspace.com');
