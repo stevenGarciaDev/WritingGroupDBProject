@@ -217,21 +217,22 @@ public class Controller {
                 }
                 //List all data of a book
                 case 6:{
+                    System.out.print("Enter a book title: ");
+                    String bookTitle = reader.nextLine();
+                    
                     System.out.println("Creating statement...");
                     stmt = conn.createStatement();
                     String sql;
-                    sql = "SELECT BookTitle, YearPublished, NumberPages FROM Book";
-                    ResultSet rs = stmt.executeQuery(sql);
+                    sql = "SELECT * FROM Book"
+                            + "NATURAL JOIN WritingGroup"
+                            + "NATURAL JOIN Publisher"
+                            + "WHERE BookTitle = ?";
+                    preStmt = conn.prepareStatement(sql);
+                    preStmt.setString(1, bookTitle);
+                    ResultSet rs = preStmt.executeQuery();
 
                     //STEP 5: Extract data from result set
-                    System.out.printf("Book Title");
-                    while (rs.next()) {
-                        //Retrieve by column name
-                        String cBookTitle = rs.getString("BookTitle");
-
-                            //Display values
-                        System.out.printf(dispNull(cBookTitle));
-                    }
+                    
                     break;
                 }
                 //Insert a new Book
