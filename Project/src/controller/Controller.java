@@ -3,6 +3,7 @@ package controller;
 
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -38,6 +39,8 @@ public class Controller {
         else
             return input;
     }
+    
+    
 
     public static void main(String[] args) {
         //Prompt the user for the database name, and the credentials.
@@ -257,15 +260,56 @@ public class Controller {
                 //Insert a new Book
                 case 7:{
                     System.out.print("Please input the new Book Title: ");
-                    String bookTitle = in.nextLine();
+                    String bookTitle = reader.nextLine();
                     System.out.print("Please input the new Book year of publish: ");
-                    String yearPublished = in.nextLine();
+                    String yearPublished = reader.nextLine();
                     System.out.print("Please input the new Book number of pages: ");
-                    String numPages = in.nextLine();
-                    System.out.print("Please input the new Book Group Name: ");
-                    String groupName = in.nextLine();
-                    System.out.print("Please input the new Book Publisher Name: ");
-                    String publisherName = in.nextLine();
+                    int numPages = reader.nextInt();
+                    
+                    //Making the UI List for user to specify
+                    stmt = conn.createStatement();
+                    ArrayList<String> gName = new ArrayList<String>();
+                    String sqlGN = "SELECT GroupName FROM WritingGroup";
+                    ResultSet rsGN = stmt.executeQuery(sqlGN);
+                    int gnNumList = 1;
+                    System.out.println("Group Name List:");
+                    while(rsGN.next()){
+                        System.out.println(gnNumList + ") " + dispNull(rsGN.getString("GroupName")));
+                        gName.add(rsGN.getString("GroupName"));
+                        gnNumList++;
+                    }
+                    
+                    
+                    System.out.print("Please input the number corresponding to the new Book Group Name from above: ");
+                    int gChoiceName = reader.nextInt();
+                    while(gChoiceName < 1 || gChoiceName > gName.size()){
+                        System.out.print("Please enter a valid number from the list above: ");
+                        gChoiceName = reader.nextInt();
+                    }
+                    String groupName = gName.get(gChoiceName - 1);
+
+
+                    //Making the List for Publisher Name
+                    ArrayList<String> pName = new ArrayList<String>();
+                    String sqlPN = "SELECT PublisherName FROM Publisher";
+                    ResultSet rsPN = stmt.executeQuery(sqlPN);
+                    int pnNumList = 1;
+                    System.out.println("Publisher Name List:");
+                    while(rsGN.next()){
+                        System.out.println(pnNumList + ") " + dispNull(rsPN.getString("PublisherName")));
+                        pName.add(rsPN.getString("PublisherName"));
+                        pnNumList++;
+                    }
+                                        
+                    System.out.print("Please input the number corresponding to the new Book Publisher Name from above: ");
+                    int pChoiceName = reader.nextInt();
+                    while(pChoiceName < 1 || pChoiceName > pName.size()){
+                        System.out.print("Please enter a valid number from the list above: ");
+                        pChoiceName = reader.nextInt();
+                    }
+                    String publisherName = pName.get(pChoiceName - 1);
+
+                    
                     
                     System.out.println("Creating statement...");
                     System.out.println("Adding to database...");
@@ -275,7 +319,7 @@ public class Controller {
                     preStmt = conn.prepareStatement(sql);
                     preStmt.setString(1, bookTitle);
                     preStmt.setString(2, yearPublished);
-                    preStmt.setString(3, numPages);
+                    preStmt.setString(3, Integer.toString(numPages));
                     preStmt.setString(4, groupName);
                     preStmt.setString(5, publisherName);                    
                     ResultSet rs = preStmt.executeQuery();

@@ -75,7 +75,7 @@ INSERT INTO Publisher(publisherName, publisherAddress,
 	('Willy Wonka', '7680 Chocolate Street, Vermont', '5555555555', 'willyWonka@myspace.com'),
 	('Bernie Sanders', '0000 Bottom 99 Persent, Maryland', '0000000000', 'topOnePercent@myspace.com');
 
-INSERT INTO WrtingGroup(GroupName, HeadWriter, YearFormed, Subject) VALUES
+INSERT INTO WritingGroup(GroupName, HeadWriter, YearFormed, Subject) VALUES
 	('ASAP MOB', 'Asap Rocky', '2011', 'Hip Hop'),
 	('Wu Tang Clan', 'RZA', '1990', 'Hip Hop'),
 	('Michelin Guide', 'Some French Guy', '1900', 'Restaurants'),
