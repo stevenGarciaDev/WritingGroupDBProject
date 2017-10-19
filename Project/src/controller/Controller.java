@@ -56,6 +56,7 @@ public class Controller {
         DB_URL = DB_URL + DBNAME; // + ";user=" + USER + ";password=" + PASS;
         Connection conn = null; //initialize the connection
         Statement stmt = null;  //initialize the statement that we're using
+        PreparedStatement preStmt = null;
         try {
             //STEP 2: Register JDBC driver
             Class.forName("org.apache.derby.jdbc.ClientDriver");
@@ -113,11 +114,13 @@ public class Controller {
                     String gn = reader.nextLine();
                     
                     System.out.println("Creating statement...");
-                    stmt = conn.createStatement();
+                    
                     String sql;
                     sql = "SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroup";
-                    sql += " WHERE GroupName = '" + gn + "'";
-                    ResultSet rs = stmt.executeQuery(sql);
+                    sql += " WHERE GroupName = ?";
+                    preStmt = conn.prepareStatement(sql);
+                    preStmt.setString(1, gn);
+                    ResultSet rs = preStmt.executeQuery();
 
                     //STEP 5: Extract data from result set
                     System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
@@ -163,6 +166,34 @@ public class Controller {
                 }
                 //List all data of a Publisher (user's input required)
                 case 4:{
+                    System.out.println("Please enter a publisher name you want shown: ");
+                    String publisher = reader.nextLine();
+                    
+                    System.out.println("Creating statement...");
+                    
+                    String sql;
+                    sql = "SELECT PublisherName, PublisherAddress, "
+                            + "PublisherPhone, PublisherEmail FROM Publisher";
+                    sql += " WHERE PublisherName = ?";
+                    preStmt = conn.prepareStatement(sql);
+                    preStmt.setString(1, publisher);
+                    ResultSet rs = preStmt.executeQuery();
+                    
+                    //STEP 5: Extract data from result set
+                    System.out.printf(displayFormat, "Publisher Name", "Publisher Address", 
+                                "Publisher Phone", "Publisher Email");
+                    while (rs.next()) {
+                        //Retrieve by column name
+                        String cPublisherName = rs.getString("PublisherName");
+                        String cPublisherAddress = rs.getString("PublisherAddress");
+                        String cPublisherPhone = rs.getString("PublisherPhone");
+                        String cPublisherEmail = rs.getString("PublisherEmail");
+
+                            //Display values
+                        System.out.printf(displayFormat,
+                                dispNull(cPublisherName), dispNull(cPublisherAddress), 
+                                dispNull(cPublisherPhone), dispNull(cPublisherEmail));
+                    }
                     break;
                 }
                 //List all book titles (Titles Only)
@@ -186,10 +217,26 @@ public class Controller {
                 }
                 //List all data of a book
                 case 6:{
+                    System.out.println("Creating statement...");
+                    stmt = conn.createStatement();
+                    String sql;
+                    sql = "SELECT BookTitle, YearPublished, NumberPages FROM Book";
+                    ResultSet rs = stmt.executeQuery(sql);
+
+                    //STEP 5: Extract data from result set
+                    System.out.printf("Book Title");
+                    while (rs.next()) {
+                        //Retrieve by column name
+                        String cBookTitle = rs.getString("BookTitle");
+
+                            //Display values
+                        System.out.printf(dispNull(cBookTitle));
+                    }
                     break;
                 }
                 //Insert a new Book
                 case 7:{
+                    
                     break;
                 }
                 //Insert a new Publisher (followed by a replacing of an old Publisher)
@@ -205,8 +252,8 @@ public class Controller {
             
             //STEP 6: Clean-up environment
             
-            stmt.close();
-            conn.close();
+            //stmt.close();
+            //conn.close();
         } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
