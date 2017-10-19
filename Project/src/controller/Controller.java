@@ -256,6 +256,30 @@ public class Controller {
                 }
                 //Insert a new Book
                 case 7:{
+                    System.out.print("Please input the new Book Title: ");
+                    String bookTitle = in.nextLine();
+                    System.out.print("Please input the new Book year of publish: ");
+                    String yearPublished = in.nextLine();
+                    System.out.print("Please input the new Book number of pages: ");
+                    String numPages = in.nextLine();
+                    System.out.print("Please input the new Book Group Name: ");
+                    String groupName = in.nextLine();
+                    System.out.print("Please input the new Book Publisher Name: ");
+                    String publisherName = in.nextLine();
+                    
+                    System.out.println("Creating statement...");
+                    System.out.println("Adding to database...");
+                    String sql;
+                    sql = "INSERT INTO Book(BookTitle, YearPublished, NumberPages, GroupName, PublisherName) VALUES "
+                            + "(?,?,?,?,?);";
+                    preStmt = conn.prepareStatement(sql);
+                    preStmt.setString(1, bookTitle);
+                    preStmt.setString(2, yearPublished);
+                    preStmt.setString(3, numPages);
+                    preStmt.setString(4, groupName);
+                    preStmt.setString(5, publisherName);                    
+                    ResultSet rs = preStmt.executeQuery();
+                    
                     
                     break;
                 }
