@@ -324,7 +324,6 @@ public class Controller {
                     preStmt.setString(5, publisherName);                    
                     ResultSet rs = preStmt.executeQuery();
                     
-                    
                     break;
                 }
                 //Insert a new Publisher (followed by a replacing of an old Publisher)
@@ -334,6 +333,12 @@ public class Controller {
                 }
                 //remove a book
                 default:{
+                    System.out.print("Please input the Book Title to remove: ");
+                    String bookTitle = in.nextLine();
+                    String sql = "DELETE FROM Book WHERE bookTitle = ?";
+                    preStmt = conn.prepareStatement(sql);
+                    preStmt.setString(1, sql);
+                    ResultSet rs = preStmt.executeQuery();
                     
                     break;
                 }
