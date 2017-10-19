@@ -116,7 +116,7 @@ public class Controller {
                     System.out.println("Please enter a group name you want shown: ");
                     String gn = reader.nextLine();
                     
-                    System.out.println("Creating statement...");
+                    System.out.println("Creating statement...\n");
                     
                     String sql;
                     sql = "SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroup";
@@ -150,8 +150,13 @@ public class Controller {
                             + "PublisherPhone, PublisherEmail FROM Publisher";
                     ResultSet rs = stmt.executeQuery(sql);
 
+                    // display format changed to ensure alignment for columns
+                    String publisherDisplayFormat = displayFormat;
+                    publisherDisplayFormat = publisherDisplayFormat.replaceAll("30", "35");
+                    System.out.println("The publisher display format is " + publisherDisplayFormat);
+                    
                     //STEP 5: Extract data from result set
-                    System.out.printf(displayFormat, "Publisher Name", "Publisher Address", 
+                    System.out.printf(publisherDisplayFormat, "Publisher Name", "Publisher Address", 
                                 "Publisher Phone", "Publisher Email");
                     while (rs.next()) {
                         //Retrieve by column name
@@ -161,7 +166,7 @@ public class Controller {
                         String cPublisherEmail = rs.getString("PublisherEmail");
 
                             //Display values
-                        System.out.printf(displayFormat,
+                        System.out.printf(publisherDisplayFormat,
                                 dispNull(cPublisherName), dispNull(cPublisherAddress), 
                                 dispNull(cPublisherPhone), dispNull(cPublisherEmail));
                     }
