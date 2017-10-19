@@ -212,13 +212,13 @@ public class Controller {
                     ResultSet rs = stmt.executeQuery(sql);
 
                     //STEP 5: Extract data from result set
-                    System.out.printf("Book Title");
+                    System.out.println("Book Title");
                     while (rs.next()) {
                         //Retrieve by column name
                         String cBookTitle = rs.getString("BookTitle");
 
                             //Display values
-                        System.out.printf(dispNull(cBookTitle));
+                        System.out.println(dispNull(cBookTitle));
                     }
                     break;
                 }
@@ -228,7 +228,7 @@ public class Controller {
                     String bookTitle = reader.nextLine();
                     
                     System.out.println("Creating statement...");
-                    stmt = conn.createStatement();
+                   
                     String sql;
                     sql = "SELECT * FROM Book"
                             + "NATURAL JOIN WritingGroup"
@@ -239,7 +239,7 @@ public class Controller {
                     ResultSet rs = preStmt.executeQuery();
 
                     //STEP 5: Extract data from result set
-                    String dsplyFrmt = "%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s";
+                    String dsplyFrmt = "%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s%-30s\n";
                     System.out.printf(dsplyFrmt, "Book Title", "Group Name", "Publisher Name", "Year Published", "Number of Pages", 
                                     "Head Writer", "Year Formed", "Subject", "Publisher Address", "Publisher Phone", "Publisher Email");
                     while (rs.next()){
@@ -328,6 +328,7 @@ public class Controller {
                     preStmt.setString(5, publisherName);                    
                     ResultSet rs = preStmt.executeQuery();
                     
+                    System.out.println("Successful add.");
                     System.out.println("Added: [" + bookTitle + ", " +
                                     yearPublished + ", " + 
                                     numPages + ", " + 

@@ -81,7 +81,7 @@ INSERT INTO WritingGroup(GroupName, HeadWriter, YearFormed, Subject) VALUES
 	('Michelin Guide', 'Some French Guy', '1900', 'Restaurants'),
 	('Hacker News', 'Paul Graham', '2000', 'Technology');
 
-INSERT INTO Book(groupName, bookTitle, publisherName, YearPublished, NumberPages) VALUES
+INSERT INTO Book(GroupName, BookTitle, PublisherName, YearPublished, NumberPages) VALUES
 	('ASAP MOB', 'So you want to be a rapper', 'Prestige Worldwide', '2011', 111),
 	('ASAP MOB', 'So you want to be a gangsta', 'Tupac', '2014', 222),
 	('Wu Tang Clan', 'Rapping for Fun and profit', 'Tupac', '1991', 121),
