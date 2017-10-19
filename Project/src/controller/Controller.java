@@ -8,9 +8,9 @@ import java.util.Scanner;
 /**
  *
  * @author Mimi Opkins with some tweaking from Dave Brown
+ * and more tweaking from Brian Pham and Steven Garcia
  */
 public class Controller {
-    static Scanner scan = new Scanner(System.in);
     //  Database credentials
     //static String USER;
     //static String PASS;
@@ -22,7 +22,6 @@ public class Controller {
     //The "s" denotes that it's a string.  All of our output in this test are
     //strings, but that won't always be the case.
     static final String displayFormat="%-30s%-30s%-30s%-30s\n";
-    static final String displayFormat2="%-30s%-30s%-30s%-30s%-30s\n";
 // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
@@ -57,8 +56,7 @@ public class Controller {
         DB_URL = DB_URL + DBNAME; // + ";user=" + USER + ";password=" + PASS;
         Connection conn = null; //initialize the connection
         Statement stmt = null;  //initialize the statement that we're using
-        PreparedStatement pstmt = null;
-        
+        PreparedStatement preStmt = null;
         try {
             //STEP 2: Register JDBC driver
             Class.forName("org.apache.derby.jdbc.ClientDriver");
@@ -69,7 +67,7 @@ public class Controller {
             System.out.println("Database successfully connected.");
             
             int choice = 0;
-            
+            Scanner reader = new Scanner(System.in);
             System.out.println("Please choose the following options\n"
                 + "1. List all Writing Group\n"
                 + "2. List all Data of a Group (User's input required)\n"
@@ -112,6 +110,32 @@ public class Controller {
                 }
                 //list all data of a group (User's input required)
                 case 2:{
+                    System.out.println("Please enter a group name you want shown: ");
+                    String gn = reader.nextLine();
+                    
+                    System.out.println("Creating statement...");
+                    
+                    String sql;
+                    sql = "SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroup";
+                    sql += " WHERE GroupName = ?";
+                    preStmt = conn.prepareStatement(sql);
+                    preStmt.setString(1, gn);
+                    ResultSet rs = preStmt.executeQuery();
+
+                    //STEP 5: Extract data from result set
+                    System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
+                    while (rs.next()) {
+                        //Retrieve by column name
+                        String cGroupName = rs.getString("GroupName");
+                        String cHeadWriter = rs.getString("Headwriter");
+                        String cYearFormed = rs.getString("YearFormed");
+                        String cSubject = rs.getString("Subject");
+
+                            //Display values
+                        System.out.printf(displayFormat,
+                                dispNull(cGroupName), dispNull(cHeadWriter), 
+                                dispNull(cYearFormed), dispNull(cSubject));
+                    }
                     break;
                 }
                 //List all publishers
@@ -133,7 +157,7 @@ public class Controller {
                         String cPublisherPhone = rs.getString("PublisherPhone");
                         String cPublisherEmail = rs.getString("PublisherEmail");
 
-                        //Display values
+                            //Display values
                         System.out.printf(displayFormat,
                                 dispNull(cPublisherName), dispNull(cPublisherAddress), 
                                 dispNull(cPublisherPhone), dispNull(cPublisherEmail));
@@ -142,26 +166,34 @@ public class Controller {
                 }
                 //List all data of a Publisher (user's input required)
                 case 4:{
-                    System.out.print("Please specify which Publisher: ");
-                    String specifiedPublisher = scan.next();
+                    System.out.println("Please enter a publisher name you want shown: ");
+                    String publisher = reader.nextLine();
                     
-                    String sql = "SELECT * FROM Publishers WHERE publisherName = ?";
-                    pstmt = conn.prepareStatement(sql);
-                    pstmt.setString(1, specifiedPublisher);
+                    System.out.println("Creating statement...");
                     
-                    ResultSet rs = pstmt.executeQuery();
+                    String sql;
+                    sql = "SELECT PublisherName, PublisherAddress, "
+                            + "PublisherPhone, PublisherEmail FROM Publisher";
+                    sql += " WHERE PublisherName = ?";
+                    preStmt = conn.prepareStatement(sql);
+                    preStmt.setString(1, publisher);
+                    ResultSet rs = preStmt.executeQuery();
+                    
+                    //STEP 5: Extract data from result set
+                    System.out.printf(displayFormat, "Publisher Name", "Publisher Address", 
+                                "Publisher Phone", "Publisher Email");
                     while (rs.next()) {
+                        //Retrieve by column name
                         String cPublisherName = rs.getString("PublisherName");
                         String cPublisherAddress = rs.getString("PublisherAddress");
                         String cPublisherPhone = rs.getString("PublisherPhone");
                         String cPublisherEmail = rs.getString("PublisherEmail");
-                        
-                        //Display values
-                        System.out.printf(displayFormat,
-                            dispNull(cPublisherName), dispNull(cPublisherAddress), 
-                            dispNull(cPublisherPhone), dispNull(cPublisherEmail));
-                    }
 
+                            //Display values
+                        System.out.printf(displayFormat,
+                                dispNull(cPublisherName), dispNull(cPublisherAddress), 
+                                dispNull(cPublisherPhone), dispNull(cPublisherEmail));
+                    }
                     break;
                 }
                 //List all book titles (Titles Only)
@@ -185,11 +217,27 @@ public class Controller {
                 }
                 //List all data of a book
                 case 6:{
+                    System.out.print("Enter a book title: ");
+                    String bookTitle = reader.nextLine();
+                    
+                    System.out.println("Creating statement...");
+                    stmt = conn.createStatement();
+                    String sql;
+                    sql = "SELECT * FROM Book"
+                            + "NATURAL JOIN WritingGroup"
+                            + "NATURAL JOIN Publisher"
+                            + "WHERE BookTitle = ?";
+                    preStmt = conn.prepareStatement(sql);
+                    preStmt.setString(1, bookTitle);
+                    ResultSet rs = preStmt.executeQuery();
+
+                    //STEP 5: Extract data from result set
                     
                     break;
                 }
                 //Insert a new Book
                 case 7:{
+                    
                     break;
                 }
                 //Insert a new Publisher (followed by a replacing of an old Publisher)
@@ -205,8 +253,8 @@ public class Controller {
             
             //STEP 6: Clean-up environment
             
-            stmt.close();
-            conn.close();
+            //stmt.close();
+            //conn.close();
         } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
