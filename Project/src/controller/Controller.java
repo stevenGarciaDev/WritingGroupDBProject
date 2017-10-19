@@ -153,7 +153,6 @@ public class Controller {
                     // display format changed to ensure alignment for columns
                     String publisherDisplayFormat = displayFormat;
                     publisherDisplayFormat = publisherDisplayFormat.replaceAll("30", "35");
-                    System.out.println("The publisher display format is " + publisherDisplayFormat);
                     
                     //STEP 5: Extract data from result set
                     System.out.printf(publisherDisplayFormat, "Publisher Name", "Publisher Address", 
