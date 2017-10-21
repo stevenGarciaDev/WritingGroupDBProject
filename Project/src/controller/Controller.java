@@ -68,7 +68,7 @@ public class Controller {
             System.out.println("Connecting to database...");
             conn = DriverManager.getConnection(DB_URL);
             System.out.println("Database successfully connected.");
-            
+             
             int choice = 0;
             Scanner reader = new Scanner(System.in);
             System.out.println("Please choose the following options\n"
@@ -82,14 +82,21 @@ public class Controller {
                 + "8. Insert a new Publisher (Followed by a replacing of an old Publisher)\n"
                 + "9. Remove a Book\n");
             while (choice < 1 || choice > 9){
-                System.out.print("Enter numbers 1 - 9: ");
-                choice = in.nextInt();
+                System.out.print("Enter a number from 1 - 9: ");
+                
+                try {
+                    choice = in.nextInt();
+                } catch (Exception ex) {
+                    System.out.println("(Please enter an integer value)");
+                    in.nextLine();
+                }
+
             }
             
             switch(choice){
                 //List all writing groups
                 case 1:{
-                    System.out.println("Creating statement...");
+                    System.out.println("Creating statement...\n");
                     stmt = conn.createStatement();
                     String sql;
                     sql = "SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroup";
@@ -143,7 +150,7 @@ public class Controller {
                 }
                 //List all publishers
                 case 3:{
-                    System.out.println("Creating statement...");
+                    System.out.println("Creating statement...\n");
                     stmt = conn.createStatement();
                     String sql;
                     sql = "SELECT PublisherName, PublisherAddress, "
@@ -176,7 +183,7 @@ public class Controller {
                     System.out.println("Please enter a publisher name you want shown: ");
                     String publisher = reader.nextLine();
                     
-                    System.out.println("Creating statement...");
+                    System.out.println("Creating statement...\n");
                     
                     String sql;
                     sql = "SELECT PublisherName, PublisherAddress, "
@@ -205,7 +212,7 @@ public class Controller {
                 }
                 //List all book titles (Titles Only)
                 case 5:{
-                    System.out.println("Creating statement...");
+                    System.out.println("Creating statement...\n");
                     stmt = conn.createStatement();
                     String sql;
                     sql = "SELECT BookTitle FROM Book";
@@ -227,7 +234,7 @@ public class Controller {
                     System.out.print("Enter a book title: ");
                     String bookTitle = reader.nextLine();
                     
-                    System.out.println("Creating statement...");
+                    System.out.println("Creating statement...\n");
                    
                     String sql;
                     sql = "SELECT BookTitle, GroupName, PublisherName, YearPublished, NumberPages "
@@ -309,7 +316,7 @@ public class Controller {
                     
                     
                     System.out.println("Creating statement...");
-                    System.out.println("Adding to database...");
+                    System.out.println("Adding to database...\n");
                     String sql;
                     sql = "INSERT INTO Book(BookTitle, YearPublished, NumberPages, GroupName, PublisherName) VALUES "
                             + "(?,?,?,?,?);";
