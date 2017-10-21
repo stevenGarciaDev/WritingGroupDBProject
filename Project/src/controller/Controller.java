@@ -69,9 +69,10 @@ public class Controller {
             conn = DriverManager.getConnection(DB_URL);
             System.out.println("Database successfully connected.");
             boolean end = false;
-            int choice = -1;
+            
             Scanner reader = new Scanner(System.in);
-
+            while(!end){
+                int choice = -1;
                 System.out.println("Please choose the following options\n"
                     + "1. List all Writing Groups\n"
                     + "2. List all Data of a Group (User's input required)\n"
@@ -403,7 +404,8 @@ public class Controller {
                         break;
                     }
                 };
-            
+                System.out.println("\n\n\n");
+            }
             
             //STEP 6: Clean-up environment
             
