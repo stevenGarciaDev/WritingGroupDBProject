@@ -40,7 +40,7 @@ public class Controller {
             return input;
     }
     
-    
+
 
     public static void main(String[] args) {
         //Prompt the user for the database name, and the credentials.
@@ -335,7 +335,6 @@ public class Controller {
                                     publisherName + "]");
                     
                     System.out.println("Here are the books currently:\n");
-                    sql = "";
                     sql = "SELECT BookTitle FROM Book";
                     ResultSet rs = stmt.executeQuery(sql);
 
@@ -357,13 +356,44 @@ public class Controller {
                 }
                 //remove a book
                 default:{
-                    System.out.print("Please input the Book Title to remove: ");
-                    String bookTitle = in.nextLine();
-                    String sql = "DELETE FROM Book WHERE bookTitle = ?";
-                    preStmt = conn.prepareStatement(sql);
-                    preStmt.setString(1, sql);
-                    ResultSet rs = preStmt.executeQuery();
+                    System.out.println("Here are the books currently:\n");
+                    stmt = conn.createStatement();
+                    ArrayList<String> bookName = new ArrayList<String>();
+                    String sqlBook = "SELECT BookTitle FROM Book";
+                    ResultSet rs = stmt.executeQuery(sqlBook);
+                    int bookNumList = 1;
+                    System.out.println("Book Title List:");
+                    while(rs.next()){
+                        System.out.println(bookNumList + ") " + dispNull(rs.getString("BookTitle")));
+                        bookName.add(rs.getString("BookTitle"));
+                        bookNumList++;
+                    }
                     
+                    System.out.print("\n\nPlease input the Book Title to remove: ");
+                    int bookChoice = reader.nextInt();
+                    while(bookChoice < 1 || bookChoice > bookNumList - 1){
+                        System.out.print("Please enter a valid book number");
+                        bookChoice = reader.nextInt();
+                    }
+                    String bookTitle = bookName.get(bookChoice - 1);
+                    String sql = "DELETE FROM Book WHERE BookTitle = ?";
+                    preStmt = conn.prepareStatement(sql);
+                    preStmt.setString(1, bookTitle);
+                    preStmt.executeUpdate();
+                    
+                    System.out.println("Here are the books currently after the delete:\n");
+                    sqlBook = "SELECT BookTitle FROM Book";
+                    rs = stmt.executeQuery(sqlBook);
+
+                    //STEP 5: Extract data from result set
+                    System.out.println("Book Title");
+                    while (rs.next()) {
+                        //Retrieve by column name
+                        String cBookTitle = rs.getString("BookTitle");
+
+                            //Display values
+                        System.out.println(dispNull(cBookTitle));
+                    }
                     break;
                 }
             };
