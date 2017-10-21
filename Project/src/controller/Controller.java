@@ -299,7 +299,7 @@ public class Controller {
                     ResultSet rsPN = stmt.executeQuery(sqlPN);
                     int pnNumList = 1;
                     System.out.println("Publisher Name List:");
-                    while(rsGN.next()){
+                    while(rsPN.next()){
                         System.out.println(pnNumList + ") " + dispNull(rsPN.getString("PublisherName")));
                         pName.add(rsPN.getString("PublisherName"));
                         pnNumList++;
@@ -317,16 +317,15 @@ public class Controller {
                     
                     System.out.println("Creating statement...");
                     System.out.println("Adding to database...\n");
-                    String sql;
-                    sql = "INSERT INTO Book(BookTitle, YearPublished, NumberPages, GroupName, PublisherName) VALUES "
-                            + "(?,?,?,?,?);";
+                    String sql = "INSERT INTO Book(BookTitle, YearPublished, NumberPages, GroupName, PublisherName) VALUES "
+                            + "(?,?,?,?,?)";
                     preStmt = conn.prepareStatement(sql);
                     preStmt.setString(1, bookTitle);
                     preStmt.setString(2, yearPublished);
                     preStmt.setString(3, Integer.toString(numPages));
                     preStmt.setString(4, groupName);
                     preStmt.setString(5, publisherName);                    
-                    ResultSet rs = preStmt.executeQuery();
+                    preStmt.executeUpdate();
                     
                     System.out.println("Successful add.");
                     System.out.println("Added: [" + bookTitle + ", " +
@@ -334,6 +333,21 @@ public class Controller {
                                     numPages + ", " + 
                                     groupName + ", " + 
                                     publisherName + "]");
+                    
+                    System.out.println("Here are the books currently:\n");
+                    sql = "";
+                    sql = "SELECT BookTitle FROM Book";
+                    ResultSet rs = stmt.executeQuery(sql);
+
+                    //STEP 5: Extract data from result set
+                    System.out.println("Book Title");
+                    while (rs.next()) {
+                        //Retrieve by column name
+                        String cBookTitle = rs.getString("BookTitle");
+
+                            //Display values
+                        System.out.println(dispNull(cBookTitle));
+                    }
                     break;
                 }
                 //Insert a new Publisher (followed by a replacing of an old Publisher)
