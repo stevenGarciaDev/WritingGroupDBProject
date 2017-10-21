@@ -74,6 +74,7 @@ public class Controller {
             while(!end){
                 int choice = -1;
                 System.out.println("Please choose the following options\n"
+                    + "0. Exit\n"
                     + "1. List all Writing Groups\n"
                     + "2. List all Data of a Group (User's input required)\n"
                     + "3. List all Publishers\n"
@@ -82,13 +83,13 @@ public class Controller {
                     + "6. List all Data of a Book (User's input required)\n"
                     + "7. Insert a new Book\n"
                     + "8. Insert a new Publisher (Followed by a replacing of an old Publisher)\n"
-                    + "9. Remove a Book\n"
-                    + "0. Exit\n");
+                    + "9. Remove a Book\n");   
                 while (choice < 0 || choice > 9){
-                    System.out.print("Enter a number from 1 - 9: ");
+                    System.out.print("Enter a number from 0 - 9: ");
 
                     try {
                         choice = reader.nextInt();
+                        reader.nextLine();
                     } catch (Exception ex) {
                         System.out.println("(Please enter an integer value)");
                         reader.nextLine();
@@ -118,7 +119,7 @@ public class Controller {
                             String cYearFormed = rs.getString("YearFormed");
                             String cSubject = rs.getString("Subject");
 
-                                //Display values
+                            //Display values
                             System.out.printf(displayFormat,
                                     dispNull(cGroupName), dispNull(cHeadWriter), 
                                     dispNull(cYearFormed), dispNull(cSubject));
@@ -404,6 +405,7 @@ public class Controller {
                         break;
                     }
                 };
+                
                 System.out.println("\n\n\n");
             }
             
