@@ -39,6 +39,37 @@ public class Controller {
         else
             return input;
     }
+    
+    /**
+     * Takes in range of integers to ensure input validation.
+     * @prompt String to output to user for context of their input
+     * @reader Scanner object used to accept user input from command line
+     * @rangeMin integer value of minimum that is valid
+     * @rangeMax integer value of maximum that is valid
+     * @return user input that is a valid integer within the specified range
+     */
+    public static int getInputWithinRange(String prompt, Scanner reader, int rangeMin, int rangeMax) {
+        boolean inputIsInvalid = true;
+        int userNumChoice = -1;
+        
+        while (inputIsInvalid) {
+            try {
+                System.out.println(prompt);
+                userNumChoice = reader.nextInt();
+                
+                if (userNumChoice < rangeMin && userNumChoice > rangeMax) {
+                    throw new Exception("Invalid input out of range");
+                }
+            } catch (Exception ex) {
+                System.out.println("Please enter an integer within the range of " + rangeMin +
+                        " and " + rangeMax + ":");
+                reader.nextLine();
+            }
+            
+        }
+            
+        return userNumChoice;
+    } 
    
 
     public static void main(String[] args) {
@@ -224,15 +255,17 @@ public class Controller {
                         String sql;
                         sql = "SELECT BookTitle FROM Book";
                         ResultSet rs = stmt.executeQuery(sql);
+                        int bookNumbering = 1;
 
                         //STEP 5: Extract data from result set
-                        System.out.println("Book Title");
+                        System.out.println("Book Titles");
                         while (rs.next()) {
                             //Retrieve by column name
                             String cBookTitle = rs.getString("BookTitle");
 
                                 //Display values
-                            System.out.println(dispNull(cBookTitle));
+                            System.out.println(bookNumbering + ") " + dispNull(cBookTitle));
+                            bookNumbering++;
                         }
                         break;
                     }
@@ -276,7 +309,7 @@ public class Controller {
                         String yearPublished = reader.nextLine();
                         System.out.print("Please input the new Book number of pages: ");
                         int numPages = reader.nextInt();
-
+                        
                         //Making the UI List for user to specify
                         stmt = conn.createStatement();
                         ArrayList<String> gName = new ArrayList<String>();
@@ -290,13 +323,25 @@ public class Controller {
                             gnNumList++;
                         }
 
-
-                        System.out.print("Please input the number corresponding to the new Book Group Name from above: ");
-                        int gChoiceName = reader.nextInt();
-                        while(gChoiceName < 1 || gChoiceName > gName.size()){
-                            System.out.print("Please enter a valid number from the list above: ");
-                            gChoiceName = reader.nextInt();
+                        boolean inputIsInvalid = true;
+                        int gChoiceName = 0;
+                        
+                        while (inputIsInvalid) {
+                            
+                            try {
+                                System.out.print("Please input the number corresponding to the new Book Group Name from above: ");
+                                gChoiceName = reader.nextInt();
+                            
+                                if (gChoiceName < 1 || gChoiceName > gName.size()) {
+                                    throw new Exception("Invalid input");
+                                }
+                                inputIsInvalid = false;
+                            } catch (Exception ex) { 
+                                System.out.println("Please enter a valid number from the list above: ");
+                                reader.nextLine();
+                            }
                         }
+                        
                         String groupName = gName.get(gChoiceName - 1);
 
 
@@ -346,13 +391,14 @@ public class Controller {
                         ResultSet rs = stmt.executeQuery(sql);
 
                         //STEP 5: Extract data from result set
-                        System.out.println("Book Title");
+                        int bookNumbering = 1;
+                        System.out.println("Book Titles");
                         while (rs.next()) {
                             //Retrieve by column name
                             String cBookTitle = rs.getString("BookTitle");
 
                                 //Display values
-                            System.out.println(dispNull(cBookTitle));
+                            System.out.println(bookNumbering + ") " + dispNull(cBookTitle));
                         }
                         break;
                     }
@@ -384,18 +430,33 @@ public class Controller {
                         String sqlpublisherBefore = "SELECT PublisherName FROM Publisher";
                         ResultSet rs = stmt.executeQuery(sqlpublisherBefore);
                         int publisherList = 1;
+                        
                         while(rs.next()){
                             System.out.println(publisherList + ") " + dispNull(rs.getString("PublisherName")));
                             publisherName.add(rs.getString("PublisherName"));
                             publisherList++;
                         }
-                        System.out.println("Please enter the number corresponding to the publisher name to be replaced: ");
-                        int publisherChoice = reader.nextInt();
-                        while(publisherChoice < 1 || publisherChoice > publisherList - 1){
-                            System.out.println("Please enter a valid book number");
-                            publisherChoice = reader.nextInt();
+                        
+                        
+                        String replacedPublisher = null;
+                        int publisherChoice = 0;
+                        boolean invalidPublisherNum = true;
+                        
+                        while ( invalidPublisherNum ) {
+                            try {
+                                System.out.println("Please enter the number corresponding to the publisher name to be replaced: ");
+                                publisherChoice = reader.nextInt();
+                                if (publisherChoice < 1 || publisherChoice > publisherList - 1 ) {
+                                    throw new Exception("Invalid Range");
+                                }
+                                invalidPublisherNum = false;
+                            } catch (Exception ex) {
+                                System.out.println("Invalid input. Must enter a digit value.");
+                                reader.nextLine();
+                            }
                         }
-                        String replacedPublisher = publisherName.get(publisherChoice - 1);
+                        
+                        replacedPublisher = publisherName.get(publisherChoice - 1);
                         
                         //Go to the child class (Book) to change the publisher indicated to the new insert
                         String sqlReplaceInBook = "UPDATE Book SET PublisherName = ? "
@@ -411,7 +472,16 @@ public class Controller {
                         preStmt.setString(1, replacedPublisher);
                         preStmt.executeUpdate();
                         
+                        //Print out the book list
+                        String bookListSQL = "SELECT * FROM Book";
+                        stmt = conn.createStatement();
+                        ResultSet bookSet = stmt.executeQuery(bookListSQL);
+                        System.out.printf("%-40s%-40s\n", "Book Title", "Publisher Name");
+                        while (bookSet.next()) {
+                            System.out.printf("%-40s%-40s\n", dispNull(bookSet.getString("BookTitle")), dispNull(bookSet.getString("PublisherName")) );
+                        }
                         
+                        //Print out the publisher list
                         String sql = "SELECT PublisherName, PublisherAddress, "
                                 + "PublisherPhone, PublisherEmail FROM Publisher";
                         rs = stmt.executeQuery(sql);
