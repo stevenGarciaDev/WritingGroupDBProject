@@ -39,25 +39,14 @@ public class Controller {
         else
             return input;
     }
-    
-
+   
 
     public static void main(String[] args) {
         //Prompt the user for the database name, and the credentials.
         //If your database has no credentials, you can update this code to
         //remove that from the connection string.
         Scanner in = new Scanner(System.in);
-        boolean invalidDatabaseName = true;
-        while (invalidDatabaseName) {
-            try {
-                System.out.print("Name of the database (not the user account): ");
-                DBNAME = in.nextLine();
-                invalidDatabaseName = false;
-            } catch (Exception ex) {
-                System.out.println("Invalid database. Please enter again: ");
-            }
-        }
-        
+        DBNAME = "WritingGroup";        
         
         /*
         System.out.print("Database user name: ");
@@ -70,6 +59,7 @@ public class Controller {
         Connection conn = null; //initialize the connection
         Statement stmt = null;  //initialize the statement that we're using
         PreparedStatement preStmt = null;
+        
         try {
             //STEP 2: Register JDBC driver
             Class.forName("org.apache.derby.jdbc.ClientDriver");
