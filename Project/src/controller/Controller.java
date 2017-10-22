@@ -358,8 +358,36 @@ public class Controller {
                     }
                     //Insert a new Publisher (followed by a replacing of an old Publisher)
                     case 8:{
-                       
-                                    
+                        System.out.println("Enter in a new Publisher: ");
+                        String newPublisher = reader.nextLine();
+                        
+                        System.out.println("Below is a list of known Publisher Names.");
+                        stmt = conn.createStatement();
+                        ArrayList<String> publisherName = new ArrayList<String>();
+                        String sqlpublisherBefore = "SELECT PublisherName FROM Publisher";
+                        ResultSet rs = stmt.executeQuery(sqlpublisherBefore);
+                        int publisherList = 1;
+                        while(rs.next()){
+                            System.out.println(publisherList + ") " + dispNull(rs.getString("PublisherName")));
+                            publisherName.add(rs.getString("PublisherName"));
+                            publisherList++;
+                        }
+                        System.out.println("Please enter the number corresponding to the publisher name to be replaced: ");
+                        int publisherChoice = reader.nextInt();
+                        while(publisherChoice < 1 || publisherChoice > publisherList - 1){
+                            System.out.println("Please enter a valid book number");
+                            publisherChoice = reader.nextInt();
+                        }
+                        String replacedPublisher = publisherName.get(publisherChoice - 1);
+                        String sql = "UPDATE Publisher"
+                                + "SET PublisherName = ?"
+                                + "WHERE PublisherName = ?";
+                        preStmt = conn.prepareStatement(sql);
+                        preStmt.setString(1, newPublisher);
+                        preStmt.setString(2, replacedPublisher);
+                        preStmt.executeUpdate();
+                        
+                        
                         break;
                     }
                     //remove a book
@@ -380,7 +408,7 @@ public class Controller {
                         System.out.print("\n\nPlease input the Book Title to remove: ");
                         int bookChoice = reader.nextInt();
                         while(bookChoice < 1 || bookChoice > bookNumList - 1){
-                            System.out.print("Please enter a valid book number");
+                            System.out.println("Please enter a valid book number");
                             bookChoice = reader.nextInt();
                         }
                         String bookTitle = bookName.get(bookChoice - 1);
