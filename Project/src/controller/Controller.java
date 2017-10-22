@@ -97,11 +97,12 @@ public class Controller {
                 }
 
                 switch(choice){
-                    //List all writing groups
+                    //exits
                     case 0:{
                         end = true;
                         break;
                     }
+                    //List all writing groups
                     case 1:{
                         System.out.println("Creating statement...\n");
                         stmt = conn.createStatement();
@@ -159,8 +160,7 @@ public class Controller {
                     case 3:{
                         System.out.println("Creating statement...\n");
                         stmt = conn.createStatement();
-                        String sql;
-                        sql = "SELECT PublisherName, PublisherAddress, "
+                        String sql = "SELECT PublisherName, PublisherAddress, "
                                 + "PublisherPhone, PublisherEmail FROM Publisher";
                         ResultSet rs = stmt.executeQuery(sql);
 
@@ -358,11 +358,28 @@ public class Controller {
                     }
                     //Insert a new Publisher (followed by a replacing of an old Publisher)
                     case 8:{
+                        stmt = conn.createStatement();
                         System.out.println("Enter in a new Publisher: ");
                         String newPublisher = reader.nextLine();
+                        System.out.println("Enter the new Publisher's address: ");
+                        String newPublisherAddress = reader.nextLine();
+                        System.out.println("Enter the new Publisher's phone number: ");
+                        String newPublisherPhone = reader.nextLine();
+                        System.out.println("Enter the new Publisher's email: ");
+                        String newPublisherEmail = reader.nextLine();
                         
+                        //makes a new tuple
+                        String sqlMakeNew = "INSERT INTO Publisher(publisherName, publisherAddress, publisherPhone, publisherEmail) "
+                                + "VALUES (?, ?, ?, ?)";
+                        preStmt = conn.prepareStatement(sqlMakeNew);
+                        preStmt.setString(1, newPublisher);
+                        preStmt.setString(2, newPublisherAddress);
+                        preStmt.setString(3, newPublisherPhone);
+                        preStmt.setString(4, newPublisherEmail);
+                        preStmt.executeUpdate();
+
+                        //asks to see the what the publisher should be replaced
                         System.out.println("Below is a list of known Publisher Names.");
-                        stmt = conn.createStatement();
                         ArrayList<String> publisherName = new ArrayList<String>();
                         String sqlpublisherBefore = "SELECT PublisherName FROM Publisher";
                         ResultSet rs = stmt.executeQuery(sqlpublisherBefore);
@@ -379,15 +396,44 @@ public class Controller {
                             publisherChoice = reader.nextInt();
                         }
                         String replacedPublisher = publisherName.get(publisherChoice - 1);
-                        String sql = "UPDATE Publisher"
-                                + "SET PublisherName = ?"
+                        
+                        //Go to the child class (Book) to change the publisher indicated to the new insert
+                        String sqlReplaceInBook = "UPDATE Book SET PublisherName = ? "
                                 + "WHERE PublisherName = ?";
-                        preStmt = conn.prepareStatement(sql);
+                        preStmt = conn.prepareStatement(sqlReplaceInBook);
                         preStmt.setString(1, newPublisher);
                         preStmt.setString(2, replacedPublisher);
                         preStmt.executeUpdate();
                         
+                        //Go back to the parent class (Publisher) to delete the old publisher
+                        String sqlDeleteOldPublisher = "DELETE FROM Publisher WHERE PublisherName = ?";
+                        preStmt = conn.prepareStatement(sqlDeleteOldPublisher);
+                        preStmt.setString(1, replacedPublisher);
+                        preStmt.executeUpdate();
                         
+                        //Print out the book list
+                        
+                        
+                        //Print out the publisher list
+                        String sql = "SELECT PublisherName, PublisherAddress, "
+                                + "PublisherPhone, PublisherEmail FROM Publisher";
+                        rs = stmt.executeQuery(sql);
+                        String publisherDisplayFormat = displayFormat;
+                        publisherDisplayFormat = publisherDisplayFormat.replaceAll("30", "35");
+                        System.out.printf(publisherDisplayFormat, "Publisher Name", "Publisher Address", 
+                                    "Publisher Phone", "Publisher Email");
+                        while (rs.next()) {
+                            //Retrieve by column name
+                            String cPublisherName = rs.getString("PublisherName");
+                            String cPublisherAddress = rs.getString("PublisherAddress");
+                            String cPublisherPhone = rs.getString("PublisherPhone");
+                            String cPublisherEmail = rs.getString("PublisherEmail");
+
+                                //Display values
+                            System.out.printf(publisherDisplayFormat,
+                                    dispNull(cPublisherName), dispNull(cPublisherAddress), 
+                                    dispNull(cPublisherPhone), dispNull(cPublisherEmail));
+                        }
                         break;
                     }
                     //remove a book
