@@ -411,10 +411,7 @@ public class Controller {
                         preStmt.setString(1, replacedPublisher);
                         preStmt.executeUpdate();
                         
-                        //Print out the book list
                         
-                        
-                        //Print out the publisher list
                         String sql = "SELECT PublisherName, PublisherAddress, "
                                 + "PublisherPhone, PublisherEmail FROM Publisher";
                         rs = stmt.executeQuery(sql);
