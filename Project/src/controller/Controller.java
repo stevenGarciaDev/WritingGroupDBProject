@@ -47,8 +47,18 @@ public class Controller {
         //If your database has no credentials, you can update this code to
         //remove that from the connection string.
         Scanner in = new Scanner(System.in);
-        System.out.print("Name of the database (not the user account): ");
-        DBNAME = in.nextLine();
+        boolean invalidDatabaseName = true;
+        while (invalidDatabaseName) {
+            try {
+                System.out.print("Name of the database (not the user account): ");
+                DBNAME = in.nextLine();
+                invalidDatabaseName = false;
+            } catch (Exception ex) {
+                System.out.println("Invalid database. Please enter again: ");
+            }
+        }
+        
+        
         /*
         System.out.print("Database user name: ");
         USER = in.nextLine();
@@ -94,7 +104,6 @@ public class Controller {
                         System.out.println("(Please enter an integer value)");
                         reader.nextLine();
                     }
-
                 }
 
                 switch(choice){
@@ -359,7 +368,8 @@ public class Controller {
                     }
                     //Insert a new Publisher (followed by a replacing of an old Publisher)
                     case 8:{
-
+                       
+                                    
                         break;
                     }
                     //remove a book
@@ -406,7 +416,7 @@ public class Controller {
                     }
                 };
                 
-                System.out.println("\n\n\n");
+                System.out.println("\n\n");
             }
             
             //STEP 6: Clean-up environment
