@@ -39,6 +39,37 @@ public class Controller {
         else
             return input;
     }
+    
+    /**
+     * Takes in range of integers to ensure input validation.
+     * @prompt String to output to user for context of their input
+     * @reader Scanner object used to accept user input from command line
+     * @rangeMin integer value of minimum that is valid
+     * @rangeMax integer value of maximum that is valid
+     * @return user input that is a valid integer within the specified range
+     */
+    public static int getInputWithinRange(String prompt, Scanner reader, int rangeMin, int rangeMax) {
+        boolean inputIsInvalid = true;
+        int userNumChoice = -1;
+        
+        while (inputIsInvalid) {
+            try {
+                System.out.println(prompt);
+                userNumChoice = reader.nextInt();
+                
+                if (userNumChoice < rangeMin && userNumChoice > rangeMax) {
+                    throw new Exception("Invalid input out of range");
+                }
+            } catch (Exception ex) {
+                System.out.println("Please enter an integer within the range of " + rangeMin +
+                        " and " + rangeMax + ":");
+                reader.nextLine();
+            }
+            
+        }
+            
+        return userNumChoice;
+    } 
    
 
     public static void main(String[] args) {
