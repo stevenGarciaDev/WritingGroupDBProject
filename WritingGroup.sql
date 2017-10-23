@@ -72,46 +72,15 @@ INSERT INTO Books(GroupName, BookTitle, PublisherName, YearPublished, NumberPage
 Stop Here for setting up database
 ------------- */
 
-insert into WritingGroups (GroupName, HeadWriter, YearFormed, Subject)
-    values ('Wonder Pen', 'James Jon', '1999', 'English');
+# Queries for each corresponding case in Controller.java file
 
-# List all writing groups
-SELECT * FROM WritingGroups;
-
-# List all the data for a group specified by the user
-SELECT * FROM WritingGroups WHERE groupName = '?';
-
-# List all publishers
-SELECT * FROM Publishers;
-
-# List all the data for a pubisher specified by the user
-SELECT * FROM Publishers WHERE publisherName = '?';
-
-# List all book titles
-SELECT bookTitle FROM Books;
-
-# List all the data for a book specified by the user. 
-SELECT * FROM Books WHERE bookTitle = '?'
-	NATURAL JOIN Publisher
-	NATURAL JOIN WritingGroup;
-
-# Insert a new book
-INSERT INTO BOOKS VALUES('?', '?', '?');
-
-# Insert a new publisher and update all 
-# book published by one publisher to be published
-# by the new pubisher.
-
-	# need to enclose both parts in a transaction
-INSERT INTO Publishers VALUES('?', '?', '?', '?');
-UPDATE Book SET publisherName = '?' 
-	WHERE publisherName = '?';
-
-
-
-
-
-
-
-
+# case 1
+# case 2
+# case 3
+# case 4
+# case 5
+# case 6
+# case 7
+# case 8
+# case 9
 
