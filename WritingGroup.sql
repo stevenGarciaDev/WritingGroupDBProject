@@ -74,13 +74,54 @@ Stop Here for setting up database
 
 # Queries for each corresponding case in Controller.java file
 
-# case 1
-# case 2
-# case 3
-# case 4
-# case 5
-# case 6
-# case 7
-# case 8
-# case 9
+# case 1: List all writing groups
+
+	"SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroups";
+
+# case 2: List all the data for a group specified by the user (include all tables)
+
+	"SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroups WHERE GroupName = ?";
+	"SELECT * FROM Books WHERE groupName = ?";
+
+# case 3: List all publishers
+
+	"SELECT PublisherName, PublisherAddress, PublisherPhone, PublisherEmail FROM Publishers";
+
+# case 4: List all the data for a pubisher specified by the user (include all tables)
+
+	"SELECT PublisherName, PublisherAddress, PublisherPhone, PublisherEmail FROM Publishers WHERE PublisherName = ? ";
+
+# case 5: List all book titles
+
+	"SELECT BookTitle FROM Books";
+
+# case 6: List all the data for a book specified by the user.
+
+	"SELECT BookTitle, GroupName, PublisherName, YearPublished, NumberPages
+	 	FROM Books 
+	 	NATURAL JOIN WritingGroups
+	 	NATURAL JOIN Publishers
+	 	WHERE BookTitle = ?";
+
+# case 7: Insert a new book
+
+	"SELECT GroupName FROM WritingGroups";
+	"SELECT PublisherName FROM Publishers";
+	"INSERT INTO Books(BookTitle, YearPublished, NumberPages, GroupName, PublisherName) VALUES (?,?,?,?,?)";
+	"SELECT BookTitle FROM Books";
+
+# case 8: Insert a new publisher and update all book published by one publisher to be published by the new pubisher.
+
+	"INSERT INTO Publishers(publisherName, publisherAddress, publisherPhone, publisherEmail) VALUES (?, ?, ?, ?)";
+	"SELECT PublisherName FROM Publishers";
+	"UPDATE Books SET PublisherName = ? WHERE PublisherName = ?";
+	"DELETE FROM Publishers WHERE PublisherName = ?";
+	"SELECT * FROM Books"
+	"SELECT PublisherName, PublisherAddress, PublisherPhone, PublisherEmail FROM Publishers";
+
+# case 9: Remove a book specified by the user
+
+	"SELECT BookTitle FROM Books";
+	"DELETE FROM Books WHERE BookTitle = ?";
+	"SELECT BookTitle FROM Books";
 
