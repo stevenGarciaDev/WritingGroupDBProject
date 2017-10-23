@@ -64,13 +64,14 @@ public class Controller {
             } catch (Exception ex) {
                 System.out.println("Please enter an integer within the range of " + rangeMin +
                         " and " + rangeMax + ":");
-                reader.nextLine();
             } 
+            reader.nextLine();
         }
+        
             
         return userNumChoice;
     } 
-   
+  
 
     public static void main(String[] args) {
         //Prompt the user for the database name, and the credentials.
@@ -171,10 +172,35 @@ public class Controller {
                             String cYearFormed = rs.getString("YearFormed");
                             String cSubject = rs.getString("Subject");
 
-                                //Display values
+                                // Display values
                             System.out.printf(displayFormat,
                                     dispNull(cGroupName), dispNull(cHeadWriter), 
                                     dispNull(cYearFormed), dispNull(cSubject));
+                        }
+                        
+                        System.out.println("\nCorresponding books that " + gn + " wrote include: \n"); // improve readability with newlines
+                        
+                        // query for the corresponding books published by specified Publisher
+                        sql = "SELECT * FROM Book WHERE groupName = ?";
+                        preStmt = conn.prepareStatement(sql);
+                        preStmt.setString(1, gn);
+                        ResultSet bookResults = preStmt.executeQuery();
+                        
+                        // Extract data from book result set
+                        String bookDisplayFormat = "%-30s" + displayFormat;
+                        System.out.printf(bookDisplayFormat, "Book Title", "Group Name","Publisher Name", 
+                                "Year Published", "Number Pages");
+                        while (bookResults.next()) {
+                            // Retrieve by column name
+                            String bookTitle = bookResults.getString("BookTitle");
+                            String groupName = bookResults.getString("GroupName");
+                            String publisherName = bookResults.getString("PublisherName");
+                            String yearPublished = bookResults.getString("YearPublished");
+                            String numberPages = bookResults.getString("NumberPages");
+                            
+                            // display values
+                            System.out.printf(bookDisplayFormat, dispNull(bookTitle), dispNull(groupName), dispNull(publisherName), 
+                                    dispNull(yearPublished), dispNull(numberPages));
                         }
                         break;
                     }
