@@ -13,7 +13,7 @@ import java.util.Scanner;
  */
 public class Controller {
     //  Database credentials
-    //static String USER;
+    //static String USER;11
     //static String PASS;
     static String DBNAME;
     //This is the specification for the printout that I'm doing:
@@ -54,18 +54,18 @@ public class Controller {
         
         while (inputIsInvalid) {
             try {
-                System.out.println(prompt);
+                System.out.print(prompt);
                 userNumChoice = reader.nextInt();
                 
                 if (userNumChoice < rangeMin && userNumChoice > rangeMax) {
                     throw new Exception("Invalid input out of range");
                 }
+                inputIsInvalid = false;
             } catch (Exception ex) {
                 System.out.println("Please enter an integer within the range of " + rangeMin +
                         " and " + rangeMax + ":");
                 reader.nextLine();
-            }
-            
+            } 
         }
             
         return userNumChoice;
@@ -115,17 +115,8 @@ public class Controller {
                     + "7. Insert a new Book\n"
                     + "8. Insert a new Publisher (Followed by a replacing of an old Publisher)\n"
                     + "9. Remove a Book\n");   
-                while (choice < 0 || choice > 9){
-                    System.out.print("Enter a number from 0 - 9: ");
-
-                    try {
-                        choice = reader.nextInt();
-                        reader.nextLine();
-                    } catch (Exception ex) {
-                        System.out.println("(Please enter an integer value)");
-                        reader.nextLine();
-                    }
-                }
+                
+                choice = getInputWithinRange("Enter a number from 0 - 9: ", reader, 0, 9);
 
                 switch(choice){
                     //exits
