@@ -2,7 +2,7 @@ drop table WritingGroup;
 drop table Publisher;
 drop table Book;
 
-CREATE TABLE WritingGroup (
+CREATE TABLE WritingGroups (
 	GroupName VARCHAR(30) NOT NULL,
 	HeadWriter VARCHAR(30),
 	YearFormed VARCHAR(4),
@@ -10,7 +10,7 @@ CREATE TABLE WritingGroup (
 	CONSTRAINT writinggroup_pk PRIMARY KEY (GroupName)
 );
 
-CREATE TABLE Publisher (
+CREATE TABLE Publishers (
 	PublisherName VARCHAR(60) NOT NULL,
 	PublisherAddress VARCHAR(80),
 	PublisherPhone VARCHAR(10),
@@ -18,7 +18,7 @@ CREATE TABLE Publisher (
 	CONSTRAINT pk_publisher PRIMARY KEY (PublisherName)
 );
 
-CREATE TABLE Book (
+CREATE TABLE Books (
 	BookTitle VARCHAR(60) NOT NULL,
 	YearPublished VARCHAR(4),
 	NumberPages INTEGER,
@@ -26,47 +26,47 @@ CREATE TABLE Book (
 	PublisherName VARCHAR(60) NOT NULL,
 	CONSTRAINT book_pk PRIMARY KEY (GroupName, BookTitle, PublisherName),
 	CONSTRAINT writing_groups_fk FOREIGN KEY (groupName)
-	REFERENCES WritingGroup (GroupName),
+	REFERENCES WritingGroups (GroupName),
 	CONSTRAINT publishers_fk FOREIGN KEY (PublisherName)
-	REFERENCES Publisher (PublisherName)
+	REFERENCES Publishers (PublisherName)
 );
 
-insert into WritingGroup (GroupName, HeadWriter, YearFormed, Subject)
+insert into WritingGroups (GroupName, HeadWriter, YearFormed, Subject)
     values ('Wonder Pen', 'James Jon', '1999', 'English');
 
 # List all writing groups
-SELECT * FROM WritingGroup;
+SELECT * FROM WritingGroups;
 
 # List all the data for a group specified by the user
-SELECT * FROM WritingGroup WHERE groupName = '?';
+SELECT * FROM WritingGroups WHERE groupName = '?';
 
 # List all publishers
-SELECT * FROM Publisher;
+SELECT * FROM Publishers;
 
 # List all the data for a pubisher specified by the user
-SELECT * FROM Publisher WHERE publisherName = '?';
+SELECT * FROM Publishers WHERE publisherName = '?';
 
 # List all book titles
-SELECT bookTitle FROM Book;
+SELECT bookTitle FROM Books;
 
 # List all the data for a book specified by the user. 
-SELECT * FROM Book WHERE bookTitle = '?'
+SELECT * FROM Books WHERE bookTitle = '?'
 	NATURAL JOIN Publisher
 	NATURAL JOIN WritingGroup;
 
 # Insert a new book
-INSERT INTO BOOK VALUES('?', '?', '?');
+INSERT INTO BOOKS VALUES('?', '?', '?');
 
 # Insert a new publisher and update all 
 # book published by one publisher to be published
 # by the new pubisher.
 
 	# need to enclose both parts in a transaction
-INSERT INTO Publisher VALUES('?', '?', '?', '?');
+INSERT INTO Publishers VALUES('?', '?', '?', '?');
 UPDATE Book SET publisherName = '?' 
 	WHERE publisherName = '?';
 
-INSERT INTO Publisher(publisherName, publisherAddress,
+INSERT INTO Publishers(publisherName, publisherAddress,
 	publisherPhone, publisherEmail) VALUES 
 	('Prestige Worldwide', '9810 Santa Catalina Island', '1111111111', 'prestigeWorldWide@myspace.com'),
 	('Harry Potter', '1092 London, England', '7777777777', 'theChosenOne@myspace.com'),
@@ -75,13 +75,13 @@ INSERT INTO Publisher(publisherName, publisherAddress,
 	('Willy Wonka', '7680 Chocolate Street, Vermont', '5555555555', 'willyWonka@myspace.com'),
 	('Bernie Sanders', '0000 Bottom 99 Persent, Maryland', '0000000000', 'topOnePercent@myspace.com');
 
-INSERT INTO WritingGroup(GroupName, HeadWriter, YearFormed, Subject) VALUES
+INSERT INTO WritingGroups(GroupName, HeadWriter, YearFormed, Subject) VALUES
 	('ASAP MOB', 'Asap Rocky', '2011', 'Hip Hop'),
 	('Wu Tang Clan', 'RZA', '1990', 'Hip Hop'),
 	('Michelin Guide', 'Some French Guy', '1900', 'Restaurants'),
 	('Hacker News', 'Paul Graham', '2000', 'Technology');
 
-INSERT INTO Book(GroupName, BookTitle, PublisherName, YearPublished, NumberPages) VALUES
+INSERT INTO Books(GroupName, BookTitle, PublisherName, YearPublished, NumberPages) VALUES
 	('ASAP MOB', 'So you want to be a rapper', 'Prestige Worldwide', '2011', 111),
 	('ASAP MOB', 'So you want to be a gangsta', 'Tupac', '2014', 222),
 	('Wu Tang Clan', 'Rapping for Fun and profit', 'Tupac', '1991', 121),

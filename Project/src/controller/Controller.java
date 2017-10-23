@@ -1,7 +1,6 @@
 package controller;
 
 
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -41,6 +40,52 @@ public class Controller {
     }
     
     /**
+     * Use SQL statement to retrieve specified table information
+     * in ResultSet with no user input required.
+     * @param tableColumns String of attributes to query the table
+     * @param tableName String of the table name to perform query on
+     * @param conn Connection to the database
+     * @param stmt Statement that creates and executes the query
+     * @return ResultSet is the databases table information from the query
+     */
+    public static ResultSet performQuery(String tableColumns, String tableName, Connection conn, Statement stmt) {
+        String query = "SELECT " + tableColumns + " FROM " + tableName;
+        ResultSet results = null;
+       
+        try {
+            stmt = conn.createStatement();
+            results = stmt.executeQuery(query);
+        } catch (Exception ex) {
+            System.out.println("Unable to perform query '" + query + "'.");
+        }     
+        return results;
+    }
+    
+     /**
+     * Use SQL prepared statements to retrieve specified table information
+     * in ResultSet as specified with WHERE clause when user input is required.
+     * @param tableColumns SQL query statement to execute on database
+     * @param tableName String of the table name to perform query on
+     * @param whereClauseColumn Column to perform WHERE clause on
+     * @param whereClauseValue the value to specify the column for
+     * @return ResultSet is the databases table information from the query
+     */
+    public static ResultSet performQuery(String tableColumns, String tableName, String whereClauseColumn, String whereClauseValue, 
+            Connection conn, PreparedStatement preStmt) {
+        String query = "SELECT " + tableColumns + " FROM " + tableName + " WHERE " + whereClauseColumn + " = ?";
+        ResultSet results = null;
+        
+        try {
+            preStmt = conn.prepareStatement(query);
+            preStmt.setString(1, whereClauseValue);
+            results = preStmt.executeQuery();
+        } catch(Exception ex) {
+            System.out.println("Unable to perform query '" + query + "'.");
+        }
+        return results;
+    }
+    
+    /**
      * Takes in range of integers to ensure input validation.
      * @prompt String to output to user for context of their input
      * @reader Scanner object used to accept user input from command line
@@ -57,7 +102,7 @@ public class Controller {
                 System.out.print(prompt);
                 userNumChoice = reader.nextInt();
                 
-                if (userNumChoice < rangeMin && userNumChoice > rangeMax) {
+                if (userNumChoice < rangeMin || userNumChoice > rangeMax) {
                     throw new Exception("Invalid input out of range");
                 }
                 inputIsInvalid = false;
@@ -66,9 +111,7 @@ public class Controller {
                         " and " + rangeMax + ":");
             } 
             reader.nextLine();
-        }
-        
-            
+        }    
         return userNumChoice;
     } 
   
@@ -128,10 +171,8 @@ public class Controller {
                     //List all writing groups
                     case 1:{
                         System.out.println("Creating statement...\n");
-                        stmt = conn.createStatement();
-                        String sql;
-                        sql = "SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroup";
-                        ResultSet rs = stmt.executeQuery(sql);
+                        
+                        ResultSet rs = performQuery("GroupName, Headwriter, YearFormed, Subject", "WritingGroups", conn, stmt);
 
                         //STEP 5: Extract data from result set
                         System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
@@ -155,13 +196,7 @@ public class Controller {
                         String gn = reader.nextLine();
 
                         System.out.println("Creating statement...\n");
-
-                        String sql;
-                        sql = "SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroup";
-                        sql += " WHERE GroupName = ?";
-                        preStmt = conn.prepareStatement(sql);
-                        preStmt.setString(1, gn);
-                        ResultSet rs = preStmt.executeQuery();
+                        ResultSet rs = performQuery("GroupName, Headwriter, YearFormed, Subject", "WritingGroups", "GroupName", gn, conn, preStmt);
 
                         //STEP 5: Extract data from result set
                         System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
@@ -178,16 +213,13 @@ public class Controller {
                                     dispNull(cYearFormed), dispNull(cSubject));
                         }
                         
-                        System.out.println("\nCorresponding books that " + gn + " wrote include: \n"); // improve readability with newlines
-                        
-                        // query for the corresponding books published by specified Publisher
-                        sql = "SELECT * FROM Book WHERE groupName = ?";
-                        preStmt = conn.prepareStatement(sql);
-                        preStmt.setString(1, gn);
-                        ResultSet bookResults = preStmt.executeQuery();
+                        System.out.println("\nCorresponding books that " + gn + " wrote include: \n"); 
+                        ResultSet bookResults = performQuery("BookTitle, GroupName, PublisherName, YearPublished, NumberPages",
+                                "Books", "GroupName", gn, conn, preStmt);
                         
                         // Extract data from book result set
                         String bookDisplayFormat = "%-30s" + displayFormat;
+                        bookDisplayFormat = bookDisplayFormat.replace("30", "40");
                         System.out.printf(bookDisplayFormat, "Book Title", "Group Name","Publisher Name", 
                                 "Year Published", "Number Pages");
                         while (bookResults.next()) {
@@ -207,11 +239,9 @@ public class Controller {
                     //List all publishers
                     case 3:{
                         System.out.println("Creating statement...\n");
-                        stmt = conn.createStatement();
-                        String sql = "SELECT PublisherName, PublisherAddress, "
-                                + "PublisherPhone, PublisherEmail FROM Publisher";
-                        ResultSet rs = stmt.executeQuery(sql);
-
+                        ResultSet rs = performQuery("PublisherName, PublisherAddress, PublisherPhone, PublisherEmail",
+                                "Publishers", conn, stmt);
+                        
                         // display format changed to ensure alignment for columns
                         String publisherDisplayFormat = displayFormat;
                         publisherDisplayFormat = publisherDisplayFormat.replaceAll("30", "35");
@@ -235,18 +265,11 @@ public class Controller {
                     }
                     //List all data of a Publisher (user's input required)
                     case 4:{
-                        System.out.println("Please enter a publisher name you want shown: ");
+                        System.out.print("Please enter a publisher name you want shown: ");
                         String publisher = reader.nextLine();
-
                         System.out.println("Creating statement...\n");
-
-                        String sql;
-                        sql = "SELECT PublisherName, PublisherAddress, "
-                                + "PublisherPhone, PublisherEmail FROM Publisher";
-                        sql += " WHERE PublisherName = ?";
-                        preStmt = conn.prepareStatement(sql);
-                        preStmt.setString(1, publisher);
-                        ResultSet rs = preStmt.executeQuery();
+                        ResultSet rs = performQuery("PublisherName, PublisherAddress, PublisherPhone, PublisherEmail", "Publishers",
+                                "PublisherName", publisher, conn, preStmt);
 
                         //STEP 5: Extract data from result set
                         System.out.printf(displayFormat, "Publisher Name", "Publisher Address", 
@@ -264,21 +287,34 @@ public class Controller {
                                     dispNull(cPublisherPhone), dispNull(cPublisherEmail));
                         }
                         
-                        sql = "SELECT * FROM Book WHERE publisherName = ?";
-                        preStmt = conn.prepareStatement(sql);
-                        preStmt.setString(1, publisher);
+                        System.out.println("\nCorresponding books that " + publisher + " published include: \n"); 
+                        ResultSet bookResults = performQuery("BookTitle, GroupName, PublisherName, YearPublished, NumberPages", "Books",
+                            "publisherName", publisher, conn, preStmt);
                         
-                        
-                        
+                        // Extract data from book result set
+                        String bookDisplayFormat = "%-30s" + displayFormat;
+                        bookDisplayFormat = bookDisplayFormat.replace("30", "40");
+                        System.out.printf(bookDisplayFormat, "Book Title", "Group Name","Publisher Name", 
+                                "Year Published", "Number Pages");
+                        while (bookResults.next()) {
+                            // Retrieve by column name
+                            String bookTitle = bookResults.getString("BookTitle");
+                            String groupName = bookResults.getString("GroupName");
+                            String publisherName = bookResults.getString("PublisherName");
+                            String yearPublished = bookResults.getString("YearPublished");
+                            String numberPages = bookResults.getString("NumberPages");
+                            
+                            // display values
+                            System.out.printf(bookDisplayFormat, dispNull(bookTitle), dispNull(groupName), dispNull(publisherName), 
+                                    dispNull(yearPublished), dispNull(numberPages));
+                        }
+
                         break;
                     }
                     //List all book titles (Titles Only)
                     case 5:{
                         System.out.println("Creating statement...\n");
-                        stmt = conn.createStatement();
-                        String sql;
-                        sql = "SELECT BookTitle FROM Book";
-                        ResultSet rs = stmt.executeQuery(sql);
+                        ResultSet rs = performQuery("BookTitle", "Books", conn, stmt);
                         int bookNumbering = 1;
 
                         //STEP 5: Extract data from result set
@@ -293,25 +329,25 @@ public class Controller {
                         }
                         break;
                     }
-                    //List all data of a book
+                    //List all data of a book (user input required)
                     case 6:{
                         System.out.print("Enter a book title: ");
                         String bookTitle = reader.nextLine();
-
+                        
                         System.out.println("Creating statement...\n");
 
                         String sql;
                         sql = "SELECT BookTitle, GroupName, PublisherName, YearPublished, NumberPages "
-                                + "FROM Book "
-                                + "NATURAL JOIN WritingGroup "
-                                + "NATURAL JOIN Publisher "
+                                + "FROM Books "
+                                + "NATURAL JOIN WritingGroups "
+                                + "NATURAL JOIN Publishers "
                                 + "WHERE BookTitle = ?";
                         preStmt = conn.prepareStatement(sql);
                         preStmt.setString(1, bookTitle);
                         ResultSet rs = preStmt.executeQuery();
 
                         //STEP 5: Extract data from result set
-                        String dsplyFrmt = "%-30s%-30s%-30s%-30s%-30s\n";
+                        String dsplyFrmt = "%-40s%-40s%-40s%-40s%-40s\n";
                         System.out.printf(dsplyFrmt, "Book Title", "Group Name", "Publisher Name", "Year Published", "Number of Pages");
                         while (rs.next()){
                             String bBookTitle = rs.getString("BookTitle");
@@ -335,10 +371,8 @@ public class Controller {
                         int numPages = reader.nextInt();
                         
                         //Making the UI List for user to specify
-                        stmt = conn.createStatement();
                         ArrayList<String> gName = new ArrayList<String>();
-                        String sqlGN = "SELECT GroupName FROM WritingGroup";
-                        ResultSet rsGN = stmt.executeQuery(sqlGN);
+                        ResultSet rsGN = performQuery("GroupName", "WritingGroups", conn, stmt);
                         int gnNumList = 1;
                         System.out.println("Group Name List:");
                         while(rsGN.next()){
@@ -346,15 +380,14 @@ public class Controller {
                             gName.add(rsGN.getString("GroupName"));
                             gnNumList++;
                         }
-
+                                  
                         int gChoiceName = getInputWithinRange("Please input the number corresponding to the "
-                                + "new Book Group Name from above: ", reader, 1, gName.size());
+                                + "new Book Group Name from above: ", reader, 1, gName.size());              
                         String groupName = gName.get(gChoiceName - 1);
 
                         //Making the List for Publisher Name
                         ArrayList<String> pName = new ArrayList<String>();
-                        String sqlPN = "SELECT PublisherName FROM Publisher";
-                        ResultSet rsPN = stmt.executeQuery(sqlPN);
+                        ResultSet rsPN = performQuery("PublisherName", "Publishers", conn, stmt);
                         int pnNumList = 1;
                         System.out.println("Publisher Name List:");
                         while(rsPN.next()){
@@ -366,11 +399,10 @@ public class Controller {
                         int pChoiceName = getInputWithinRange("Please input the number corresponding to the new Book "
                                 + "Publisher Name from above: ", reader, 1, pName.size());
                         String publisherName = pName.get(pChoiceName - 1);
-
                         
                         System.out.println("Creating statement...");
                         System.out.println("Adding to database...\n");
-                        String sql = "INSERT INTO Book(BookTitle, YearPublished, NumberPages, GroupName, PublisherName) VALUES "
+                        String sql = "INSERT INTO Books(BookTitle, YearPublished, NumberPages, GroupName, PublisherName) VALUES "
                                 + "(?,?,?,?,?)";
                         preStmt = conn.prepareStatement(sql);
                         preStmt.setString(1, bookTitle);
@@ -388,8 +420,7 @@ public class Controller {
                                         publisherName + "]");
 
                         System.out.println("Here are the books currently:\n");
-                        sql = "SELECT BookTitle FROM Book";
-                        ResultSet rs = stmt.executeQuery(sql);
+                        ResultSet rs = performQuery("BookTitle", "Books", conn, stmt);
 
                         //STEP 5: Extract data from result set
                         int bookNumbering = 1;
@@ -405,7 +436,6 @@ public class Controller {
                     }
                     //Insert a new Publisher (followed by a replacing of an old Publisher)
                     case 8:{
-                        stmt = conn.createStatement();
                         System.out.println("Enter in a new Publisher: ");
                         String newPublisher = reader.nextLine();
                         System.out.println("Enter the new Publisher's address: ");
@@ -416,7 +446,7 @@ public class Controller {
                         String newPublisherEmail = reader.nextLine();
                         
                         //makes a new tuple
-                        String sqlMakeNew = "INSERT INTO Publisher(publisherName, publisherAddress, publisherPhone, publisherEmail) "
+                        String sqlMakeNew = "INSERT INTO Publishers(publisherName, publisherAddress, publisherPhone, publisherEmail) "
                                 + "VALUES (?, ?, ?, ?)";
                         preStmt = conn.prepareStatement(sqlMakeNew);
                         preStmt.setString(1, newPublisher);
@@ -428,8 +458,7 @@ public class Controller {
                         //asks to see the what the publisher should be replaced
                         System.out.println("Below is a list of known Publisher Names.");
                         ArrayList<String> publisherName = new ArrayList<String>();
-                        String sqlpublisherBefore = "SELECT PublisherName FROM Publisher";
-                        ResultSet rs = stmt.executeQuery(sqlpublisherBefore);
+                        ResultSet rs = performQuery("PublisherName", "Publishers", conn, stmt);
                         int publisherList = 1;
                         
                         while(rs.next()){
@@ -443,7 +472,7 @@ public class Controller {
                         String replacedPublisher = publisherName.get(publisherChoice - 1);
                         
                         //Go to the child class (Book) to change the publisher indicated to the new insert
-                        String sqlReplaceInBook = "UPDATE Book SET PublisherName = ? "
+                        String sqlReplaceInBook = "UPDATE Books SET PublisherName = ? "
                                 + "WHERE PublisherName = ?";
                         preStmt = conn.prepareStatement(sqlReplaceInBook);
                         preStmt.setString(1, newPublisher);
@@ -451,24 +480,20 @@ public class Controller {
                         preStmt.executeUpdate();
                         
                         //Go back to the parent class (Publisher) to delete the old publisher
-                        String sqlDeleteOldPublisher = "DELETE FROM Publisher WHERE PublisherName = ?";
+                        String sqlDeleteOldPublisher = "DELETE FROM Publishers WHERE PublisherName = ?";
                         preStmt = conn.prepareStatement(sqlDeleteOldPublisher);
                         preStmt.setString(1, replacedPublisher);
                         preStmt.executeUpdate();
                         
                         //Print out the book list
-                        String bookListSQL = "SELECT * FROM Book";
-                        stmt = conn.createStatement();
-                        ResultSet bookSet = stmt.executeQuery(bookListSQL);
+                        ResultSet bookSet = performQuery("BookTitle, GroupName, PublisherName, YearPublished, NumberPages", "Books", conn, stmt);
                         System.out.printf("%-40s%-40s\n", "Book Title", "Publisher Name");
                         while (bookSet.next()) {
                             System.out.printf("%-40s%-40s\n", dispNull(bookSet.getString("BookTitle")), dispNull(bookSet.getString("PublisherName")) );
                         }
                         
                         //Print out the publisher list
-                        String sql = "SELECT PublisherName, PublisherAddress, "
-                                + "PublisherPhone, PublisherEmail FROM Publisher";
-                        rs = stmt.executeQuery(sql);
+                        rs = performQuery("PublisherName, PublisherAddress,PublisherPhone, PublisherEmail", "Publishers", conn, stmt);
                         String publisherDisplayFormat = displayFormat;
                         publisherDisplayFormat = publisherDisplayFormat.replaceAll("30", "35");
                         System.out.printf(publisherDisplayFormat, "Publisher Name", "Publisher Address", 
@@ -490,10 +515,8 @@ public class Controller {
                     //remove a book
                     case 9:{
                         System.out.println("Here are the books currently:\n");
-                        stmt = conn.createStatement();
                         ArrayList<String> bookName = new ArrayList<String>();
-                        String sqlBook = "SELECT BookTitle FROM Book";
-                        ResultSet rs = stmt.executeQuery(sqlBook);
+                        ResultSet rs = performQuery("BookTitle", "Books", conn, stmt);
                         int bookNumList = 1;
                         System.out.println("Book Title List:");
                         while(rs.next()){
@@ -506,14 +529,13 @@ public class Controller {
                         int bookChoice = getInputWithinRange("\n\nPlease input the Book Title to remove: ", reader, 1, bookNumList - 1);
                         String bookTitle = bookName.get(bookChoice - 1);
                         
-                        String sql = "DELETE FROM Book WHERE BookTitle = ?";
+                        String sql = "DELETE FROM Books WHERE BookTitle = ?";
                         preStmt = conn.prepareStatement(sql);
                         preStmt.setString(1, bookTitle);
                         preStmt.executeUpdate();
 
                         System.out.println("Here are the books currently after the delete:\n");
-                        sqlBook = "SELECT BookTitle FROM Book";
-                        rs = stmt.executeQuery(sqlBook);
+                        rs = performQuery("BookTitle", "Books", conn, stmt);
 
                         //STEP 5: Extract data from result set
                         System.out.println("Book Title");
@@ -527,7 +549,7 @@ public class Controller {
                         break;
                     }
                     default: {
-                        System.out.println("That is not an available option.\n");
+                        System.out.print("That is not an available option.");
                         break;
                     }
                 };
