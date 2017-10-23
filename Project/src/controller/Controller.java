@@ -151,7 +151,7 @@ public class Controller {
                     }
                     //list all data of a group (User's input required)
                     case 2:{
-                        System.out.println("Please enter a group name you want shown: ");
+                        System.out.print("Please enter a group name you want shown: ");
                         String gn = reader.nextLine();
 
                         System.out.println("Creating statement...\n");
@@ -263,6 +263,13 @@ public class Controller {
                                     dispNull(cPublisherName), dispNull(cPublisherAddress), 
                                     dispNull(cPublisherPhone), dispNull(cPublisherEmail));
                         }
+                        
+                        sql = "SELECT * FROM Book WHERE publisherName = ?";
+                        preStmt = conn.prepareStatement(sql);
+                        preStmt.setString(1, publisher);
+                        
+                        
+                        
                         break;
                     }
                     //List all book titles (Titles Only)
@@ -340,27 +347,9 @@ public class Controller {
                             gnNumList++;
                         }
 
-                        boolean inputIsInvalid = true;
-                        int gChoiceName = 0;
-                        
-                        while (inputIsInvalid) {
-                            
-                            try {
-                                System.out.print("Please input the number corresponding to the new Book Group Name from above: ");
-                                gChoiceName = reader.nextInt();
-                            
-                                if (gChoiceName < 1 || gChoiceName > gName.size()) {
-                                    throw new Exception("Invalid input");
-                                }
-                                inputIsInvalid = false;
-                            } catch (Exception ex) { 
-                                System.out.println("Please enter a valid number from the list above: ");
-                                reader.nextLine();
-                            }
-                        }
-                        
+                        int gChoiceName = getInputWithinRange("Please input the number corresponding to the "
+                                + "new Book Group Name from above: ", reader, 1, gName.size());
                         String groupName = gName.get(gChoiceName - 1);
-
 
                         //Making the List for Publisher Name
                         ArrayList<String> pName = new ArrayList<String>();
@@ -373,17 +362,12 @@ public class Controller {
                             pName.add(rsPN.getString("PublisherName"));
                             pnNumList++;
                         }
-
-                        System.out.print("Please input the number corresponding to the new Book Publisher Name from above: ");
-                        int pChoiceName = reader.nextInt();
-                        while(pChoiceName < 1 || pChoiceName > pName.size()){
-                            System.out.print("Please enter a valid number from the list above: ");
-                            pChoiceName = reader.nextInt();
-                        }
+                        
+                        int pChoiceName = getInputWithinRange("Please input the number corresponding to the new Book "
+                                + "Publisher Name from above: ", reader, 1, pName.size());
                         String publisherName = pName.get(pChoiceName - 1);
 
-
-
+                        
                         System.out.println("Creating statement...");
                         System.out.println("Adding to database...\n");
                         String sql = "INSERT INTO Book(BookTitle, YearPublished, NumberPages, GroupName, PublisherName) VALUES "
@@ -454,26 +438,9 @@ public class Controller {
                             publisherList++;
                         }
                         
-                        
-                        String replacedPublisher = null;
-                        int publisherChoice = 0;
-                        boolean invalidPublisherNum = true;
-                        
-                        while ( invalidPublisherNum ) {
-                            try {
-                                System.out.println("Please enter the number corresponding to the publisher name to be replaced: ");
-                                publisherChoice = reader.nextInt();
-                                if (publisherChoice < 1 || publisherChoice > publisherList - 1 ) {
-                                    throw new Exception("Invalid Range");
-                                }
-                                invalidPublisherNum = false;
-                            } catch (Exception ex) {
-                                System.out.println("Invalid input. Must enter a digit value.");
-                                reader.nextLine();
-                            }
-                        }
-                        
-                        replacedPublisher = publisherName.get(publisherChoice - 1);
+                        int publisherChoice = getInputWithinRange("Please enter the number corresponding to the publisher "
+                                + "name to be replaced: ", reader, 1, publisherList - 1);
+                        String replacedPublisher = publisherName.get(publisherChoice - 1);
                         
                         //Go to the child class (Book) to change the publisher indicated to the new insert
                         String sqlReplaceInBook = "UPDATE Book SET PublisherName = ? "
@@ -521,7 +488,7 @@ public class Controller {
                         break;
                     }
                     //remove a book
-                    default:{
+                    case 9:{
                         System.out.println("Here are the books currently:\n");
                         stmt = conn.createStatement();
                         ArrayList<String> bookName = new ArrayList<String>();
@@ -536,12 +503,9 @@ public class Controller {
                         }
 
                         System.out.print("\n\nPlease input the Book Title to remove: ");
-                        int bookChoice = reader.nextInt();
-                        while(bookChoice < 1 || bookChoice > bookNumList - 1){
-                            System.out.println("Please enter a valid book number");
-                            bookChoice = reader.nextInt();
-                        }
+                        int bookChoice = getInputWithinRange("\n\nPlease input the Book Title to remove: ", reader, 1, bookNumList - 1);
                         String bookTitle = bookName.get(bookChoice - 1);
+                        
                         String sql = "DELETE FROM Book WHERE BookTitle = ?";
                         preStmt = conn.prepareStatement(sql);
                         preStmt.setString(1, bookTitle);
@@ -560,6 +524,10 @@ public class Controller {
                                 //Display values
                             System.out.println(dispNull(cBookTitle));
                         }
+                        break;
+                    }
+                    default: {
+                        System.out.println("That is not an available option.\n");
                         break;
                     }
                 };
