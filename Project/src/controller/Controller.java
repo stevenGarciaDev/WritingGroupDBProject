@@ -85,6 +85,22 @@ public class Controller {
         return results;
     }
     
+    public static String getInputWithinRange(String prompt, Scanner reader, int max) {
+        boolean inputIsInvalid = true;
+        String input = "";
+        
+        while (inputIsInvalid) {
+            System.out.println(prompt);
+            input = reader.nextLine();
+            
+            if (input.length() <= max) {
+                inputIsInvalid = false;
+            }
+        }
+        
+        return input;
+    }
+    
     /**
      * Takes in range of integers to ensure input validation.
      * @prompt String to output to user for context of their input
@@ -377,10 +393,8 @@ public class Controller {
                     }
                     //Insert a new Book
                     case 7:{
-                        System.out.print("Please input the new Book Title: ");
-                        String bookTitle = reader.nextLine();
-                        System.out.print("Please input the new Book year of publish: ");
-                        String yearPublished = reader.nextLine();
+                        String bookTitle = getInputWithinRange("Please input the new Book Title: ",  reader, 60);
+                        String yearPublished = getInputWithinRange("Please input the new Book year of publish: ", reader, 4);
                         System.out.print("Please input the new Book number of pages: ");
                         int numPages = reader.nextInt();
                         
@@ -451,13 +465,10 @@ public class Controller {
                     }
                     //Insert a new Publisher (followed by a replacing of an old Publisher)
                     case 8:{
-                        System.out.println("Enter in a new Publisher: ");
-                        String newPublisher = reader.nextLine();
-                        System.out.println("Enter the new Publisher's address: ");
-                        String newPublisherAddress = reader.nextLine();
+                        String newPublisher = getInputWithinRange("Enter in a new Publisher: ", reader, 60);
+                        String newPublisherAddress = getInputWithinRange("Enter the new Publisher's address: ", reader, 80);
                         String newPublisherPhone = Integer.toString( getInputWithinRange("Enter the new Publisher's phone number: ", reader, 10, 10) );
-                        System.out.println("Enter the new Publisher's email: ");
-                        String newPublisherEmail = reader.nextLine();
+                        String newPublisherEmail = getInputWithinRange("Enter the new Publisher's email: ", reader, 80);
                         
                         //asks to see the what the publisher should be replaced
                         System.out.println("Below is a list of known Publisher Names.");
