@@ -1,7 +1,7 @@
 # these are each to be run individually
-drop table Book;
-drop table WritingGroup;
-drop table Publisher;
+drop table Books;
+drop table WritingGroups;
+drop table Publishers;
 
 
 /* -------------

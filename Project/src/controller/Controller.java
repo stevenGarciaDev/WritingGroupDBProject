@@ -199,16 +199,18 @@ public class Controller {
                         ResultSet rs = performQuery("GroupName, Headwriter, YearFormed, Subject", "WritingGroups", "GroupName", gn, conn, preStmt);
 
                         //STEP 5: Extract data from result set
-                        System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
+                        String groupDisplayFormat = displayFormat;
+                        groupDisplayFormat = groupDisplayFormat.replaceAll("30", "35");
+                        System.out.printf(groupDisplayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
                         while (rs.next()) {
                             //Retrieve by column name
                             String cGroupName = rs.getString("GroupName");
                             String cHeadWriter = rs.getString("Headwriter");
                             String cYearFormed = rs.getString("YearFormed");
                             String cSubject = rs.getString("Subject");
-
+                            
                                 // Display values
-                            System.out.printf(displayFormat,
+                            System.out.printf(groupDisplayFormat,
                                     dispNull(cGroupName), dispNull(cHeadWriter), 
                                     dispNull(cYearFormed), dispNull(cSubject));
                         }
@@ -219,7 +221,7 @@ public class Controller {
                         
                         // Extract data from book result set
                         String bookDisplayFormat = "%-30s" + displayFormat;
-                        bookDisplayFormat = bookDisplayFormat.replace("30", "40");
+                        bookDisplayFormat = bookDisplayFormat.replace("30", "35");
                         System.out.printf(bookDisplayFormat, "Book Title", "Group Name","Publisher Name", 
                                 "Year Published", "Number Pages");
                         while (bookResults.next()) {
@@ -272,7 +274,9 @@ public class Controller {
                                 "PublisherName", publisher, conn, preStmt);
 
                         //STEP 5: Extract data from result set
-                        System.out.printf(displayFormat, "Publisher Name", "Publisher Address", 
+                        String publisherDisplayFormat = displayFormat;
+                        publisherDisplayFormat = publisherDisplayFormat.replaceAll("30", "40");
+                        System.out.printf(publisherDisplayFormat, "Publisher Name", "Publisher Address", 
                                     "Publisher Phone", "Publisher Email");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -282,7 +286,7 @@ public class Controller {
                             String cPublisherEmail = rs.getString("PublisherEmail");
 
                                 //Display values
-                            System.out.printf(displayFormat,
+                            System.out.printf(publisherDisplayFormat,
                                     dispNull(cPublisherName), dispNull(cPublisherAddress), 
                                     dispNull(cPublisherPhone), dispNull(cPublisherEmail));
                         }
@@ -431,6 +435,7 @@ public class Controller {
 
                                 //Display values
                             System.out.println(bookNumbering + ") " + dispNull(cBookTitle));
+                            bookNumbering++;
                         }
                         break;
                     }
@@ -441,20 +446,10 @@ public class Controller {
                         System.out.println("Enter the new Publisher's address: ");
                         String newPublisherAddress = reader.nextLine();
                         System.out.println("Enter the new Publisher's phone number: ");
-                        String newPublisherPhone = reader.nextLine();
+                        String newPublisherPhone = Integer.toString( getInputWithinRange("Enter the new Publisher's phone number: ", reader, 10, 10) );
                         System.out.println("Enter the new Publisher's email: ");
                         String newPublisherEmail = reader.nextLine();
                         
-                        //makes a new tuple
-                        String sqlMakeNew = "INSERT INTO Publishers(publisherName, publisherAddress, publisherPhone, publisherEmail) "
-                                + "VALUES (?, ?, ?, ?)";
-                        preStmt = conn.prepareStatement(sqlMakeNew);
-                        preStmt.setString(1, newPublisher);
-                        preStmt.setString(2, newPublisherAddress);
-                        preStmt.setString(3, newPublisherPhone);
-                        preStmt.setString(4, newPublisherEmail);
-                        preStmt.executeUpdate();
-
                         //asks to see the what the publisher should be replaced
                         System.out.println("Below is a list of known Publisher Names.");
                         ArrayList<String> publisherName = new ArrayList<String>();
@@ -470,6 +465,18 @@ public class Controller {
                         int publisherChoice = getInputWithinRange("Please enter the number corresponding to the publisher "
                                 + "name to be replaced: ", reader, 1, publisherList - 1);
                         String replacedPublisher = publisherName.get(publisherChoice - 1);
+                        
+                        System.out.println("\n");
+                        
+                        //makes a new tuple
+                        String sqlMakeNew = "INSERT INTO Publishers(publisherName, publisherAddress, publisherPhone, publisherEmail) "
+                                + "VALUES (?, ?, ?, ?)";
+                        preStmt = conn.prepareStatement(sqlMakeNew);
+                        preStmt.setString(1, newPublisher);
+                        preStmt.setString(2, newPublisherAddress);
+                        preStmt.setString(3, newPublisherPhone);
+                        preStmt.setString(4, newPublisherEmail);
+                        preStmt.executeUpdate();
                         
                         //Go to the child class (Book) to change the publisher indicated to the new insert
                         String sqlReplaceInBook = "UPDATE Books SET PublisherName = ? "
@@ -492,10 +499,12 @@ public class Controller {
                             System.out.printf("%-40s%-40s\n", dispNull(bookSet.getString("BookTitle")), dispNull(bookSet.getString("PublisherName")) );
                         }
                         
+                        System.out.println("\n");
+                        
                         //Print out the publisher list
                         rs = performQuery("PublisherName, PublisherAddress,PublisherPhone, PublisherEmail", "Publishers", conn, stmt);
                         String publisherDisplayFormat = displayFormat;
-                        publisherDisplayFormat = publisherDisplayFormat.replaceAll("30", "35");
+                        publisherDisplayFormat = publisherDisplayFormat.replaceAll("30", "40");
                         System.out.printf(publisherDisplayFormat, "Publisher Name", "Publisher Address", 
                                     "Publisher Phone", "Publisher Email");
                         while (rs.next()) {
@@ -525,8 +534,7 @@ public class Controller {
                             bookNumList++;
                         }
 
-                        System.out.print("\n\nPlease input the Book Title to remove: ");
-                        int bookChoice = getInputWithinRange("\n\nPlease input the Book Title to remove: ", reader, 1, bookNumList - 1);
+                        int bookChoice = getInputWithinRange("\n\nPlease input the Book number to remove: ", reader, 1, bookNumList - 1);
                         String bookTitle = bookName.get(bookChoice - 1);
                         
                         String sql = "DELETE FROM Books WHERE BookTitle = ?";
@@ -539,12 +547,14 @@ public class Controller {
 
                         //STEP 5: Extract data from result set
                         System.out.println("Book Title");
+                        bookNumList = 1;
                         while (rs.next()) {
                             //Retrieve by column name
                             String cBookTitle = rs.getString("BookTitle");
 
                                 //Display values
-                            System.out.println(dispNull(cBookTitle));
+                            System.out.println(bookNumList + ") " + dispNull(cBookTitle));
+                            bookNumList++;
                         }
                         break;
                     }
