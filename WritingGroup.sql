@@ -1,8 +1,9 @@
-# these are each to be run individually
-drop table Books;
-drop table WritingGroups;
-drop table Publishers;
-
+-- these are each to be run individually
+/*
+drop table Book;
+drop table WritingGroup;
+drop table Publisher;
+*/
 
 /* -------------
 Start Here for setting up database
@@ -68,34 +69,33 @@ INSERT INTO Books(GroupName, BookTitle, PublisherName, YearPublished, NumberPage
 	('Hacker News', 'How to code for dummies', 'Drake', '2015', 298),
 	('Hacker News', 'how to flip pizza for dummies', 'Harry Potter', '2009', 165);
 
-/* -------------
-Stop Here for setting up database
-------------- */
+/*Stop Here for setting up database
 
-# Queries for each corresponding case in Controller.java file
 
-# case 1: List all writing groups
+-- Queries for each corresponding case in Controller.java file
+
+-- case 1: List all writing groups
 
 	"SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroups";
 
-# case 2: List all the data for a group specified by the user (include all tables)
+-- case 2: List all the data for a group specified by the user (include all tables)
 
 	"SELECT GroupName, Headwriter, YearFormed, Subject FROM WritingGroups WHERE GroupName = ?";
 	"SELECT * FROM Books WHERE groupName = ?";
 
-# case 3: List all publishers
+-- case 3: List all publishers
 
 	"SELECT PublisherName, PublisherAddress, PublisherPhone, PublisherEmail FROM Publishers";
 
-# case 4: List all the data for a pubisher specified by the user (include all tables)
+-- case 4: List all the data for a pubisher specified by the user (include all tables)
 
 	"SELECT PublisherName, PublisherAddress, PublisherPhone, PublisherEmail FROM Publishers WHERE PublisherName = ? ";
 
-# case 5: List all book titles
+-- case 5: List all book titles
 
 	"SELECT BookTitle FROM Books";
 
-# case 6: List all the data for a book specified by the user.
+-- case 6: List all the data for a book specified by the user.
 
 	"SELECT BookTitle, GroupName, PublisherName, YearPublished, NumberPages
 	 	FROM Books 
@@ -103,14 +103,14 @@ Stop Here for setting up database
 	 	NATURAL JOIN Publishers
 	 	WHERE BookTitle = ?";
 
-# case 7: Insert a new book
+-- case 7: Insert a new book
 
 	"SELECT GroupName FROM WritingGroups";
 	"SELECT PublisherName FROM Publishers";
 	"INSERT INTO Books(BookTitle, YearPublished, NumberPages, GroupName, PublisherName) VALUES (?,?,?,?,?)";
 	"SELECT BookTitle FROM Books";
 
-# case 8: Insert a new publisher and update all book published by one publisher to be published by the new pubisher.
+-- case 8: Insert a new publisher and update all book published by one publisher to be published by the new pubisher.
 
 	"INSERT INTO Publishers(publisherName, publisherAddress, publisherPhone, publisherEmail) VALUES (?, ?, ?, ?)";
 	"SELECT PublisherName FROM Publishers";
@@ -119,9 +119,9 @@ Stop Here for setting up database
 	"SELECT * FROM Books"
 	"SELECT PublisherName, PublisherAddress, PublisherPhone, PublisherEmail FROM Publishers";
 
-# case 9: Remove a book specified by the user
+-- case 9: Remove a book specified by the user
 
 	"SELECT BookTitle FROM Books";
 	"DELETE FROM Books WHERE BookTitle = ?";
 	"SELECT BookTitle FROM Books";
-
+*/
