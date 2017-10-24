@@ -445,7 +445,6 @@ public class Controller {
                         String newPublisher = reader.nextLine();
                         System.out.println("Enter the new Publisher's address: ");
                         String newPublisherAddress = reader.nextLine();
-                        System.out.println("Enter the new Publisher's phone number: ");
                         String newPublisherPhone = Integer.toString( getInputWithinRange("Enter the new Publisher's phone number: ", reader, 10, 10) );
                         System.out.println("Enter the new Publisher's email: ");
                         String newPublisherEmail = reader.nextLine();
